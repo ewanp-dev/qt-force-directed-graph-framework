@@ -22,3 +22,21 @@ class ForceDirectedGraphicsView(QGraphicsView):
         self.setViewportUpdateMode(QGraphicsView.ViewportUpdateMode.FullViewportUpdate)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.MiddleButton:
+            self.middleMouseButtonPress(event)
+        else:
+            super().mousePressEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        if event.button() == Qt.MouseButton.MiddleButton:
+            self.middleMouseButtonRelease(event)
+        else:
+            super().mouseReleaseEvent(event)
+
+    def middleMouseButtonPress(self, event):
+        print("MMB Pressed")
+
+    def middleMouseButtonRelease(self, event):
+        print("MMB Release")

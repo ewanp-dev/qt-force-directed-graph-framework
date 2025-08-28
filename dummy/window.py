@@ -60,7 +60,6 @@ class ForceDrivenNodeEditorWindow(QWidget):
             -100, -100, 100, 100, outline_pen, green_brush
         )
         ellipse.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable)
-        print(ellipse.pos().x())
 
         text = self.graphics_scene.addText("This is a sample text")
         text.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)

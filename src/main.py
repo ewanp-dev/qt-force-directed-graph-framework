@@ -1,19 +1,27 @@
-import sys
+from PyQt6.QtWidgets import QApplication, QVBoxLayout, QWidget
 
-from PyQt6.QtWidgets import QApplication
-
-from window import FDNodeGraphWidget
+from view import FDGraphicsView
 
 
-def main() -> None:
-    """
-    Main executable of the module
-    """
-    app = QApplication(sys.argv)
-    window = FDNodeGraphWidget()
-    window.show()
-    sys.exit(app.exec())
+class FDNodeGraphWidget(QWidget):
+
+    def __init__(self, parent=None) -> None:
+        super().__init__(parent)
+
+        self.initUI()
+
+    def initUI(self) -> None:
+        _lyt = QVBoxLayout(self)
+        self.view: FDGraphicsView = FDGraphicsView()
+        _lyt.addWidget(self.view)
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+
+    app = QApplication(sys.argv)
+    graph = FDNodeGraphWidget()
+    graph.setWindowTitle("Node Graph")
+    graph.resize(800, 800)
+    graph.show()
+    sys.exit(app.exec())

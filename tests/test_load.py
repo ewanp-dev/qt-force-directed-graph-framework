@@ -29,8 +29,8 @@ class Node(QGraphicsEllipseItem):
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)
         self.title = title
 
-        NodeSocket(self, QPointF(0, height / 2))  # Input socket
-        NodeSocket(self, QPointF(width, height / 2))  # Output socket
+        # NodeSocket(self, QPointF(0, height / 2))  # Input socket
+        # NodeSocket(self, QPointF(width, height / 2))  # Output socket
 
 
 class NodeGraph(QGraphicsView):

@@ -2,7 +2,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QMouseEvent, QPainter, QWheelEvent
 from PyQt6.QtWidgets import QApplication, QGraphicsView
 
-from node import FDNode
+from node import Connect, FDNode
 
 
 class FDGraphicsView(QGraphicsView):
@@ -37,9 +37,13 @@ class FDGraphicsView(QGraphicsView):
 
         # temp node creation for test
         # TODO put this into createNode method
-        node_a: FDNode = FDNode(title="test_string")
-        node_a.setPos(100, 0)
+        node_a: FDNode = FDNode(-100, 0, 40, "#3498DB")
+        node_b: FDNode = FDNode(150, 80, 40, "#E74C3C")
         self.scene().addItem(node_a)
+        self.scene().addItem(node_b)
+
+        conn = Connect(node_a, node_b)
+        self.scene().addItem(conn)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """

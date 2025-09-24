@@ -43,8 +43,9 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     graph = FDNodeGraphWidget()
     viewer = graph.view
-    node_a = viewer.createNode(100, 100)
-    node_b = viewer.createNode(-100, -50)
+    node_a = viewer.createNode()
+    node_b = viewer.createNode()
+    node_b.setPosition(-100, -50)
     node_a.setInput(parent=viewer, input=node_b)
     graph.setWindowTitle("Node Graph")
     graph.resize(800, 800)

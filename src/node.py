@@ -61,7 +61,19 @@ class FDNode(QGraphicsEllipseItem):
         :param parent: The node graph instance where the node lives
         :param input: The node to input to the current node
         """
+        print(self.parentWidget())
+        print(self.parentObject())
+        print(self.parentItem())
         parent.scene().addItem(Connect(self, input))
+
+    def setPosition(self, x: float, y: float) -> None:
+        """
+        Sets the position of the node
+
+        :param x: The position on the x axis
+        :param y: The position on the y axis
+        """
+        self.setPos(x, y)
 
 
 class Connect(QGraphicsLineItem):
@@ -79,7 +91,7 @@ class Connect(QGraphicsLineItem):
         super().__init__()
         self.node_a = node_a
         self.node_b = node_b
-        self.setPen(QPen(QColor("#F1C40F"), 2))
+        self.setPen(QPen(QColor("#dddddd"), 2))
         self.setZValue(-1)
         node_a.add_connection(self)
         node_b.add_connection(self)

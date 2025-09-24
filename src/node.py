@@ -1,6 +1,11 @@
 from PyQt6.QtCore import QPointF, Qt
 from PyQt6.QtGui import QBrush, QColor, QPen
-from PyQt6.QtWidgets import QGraphicsEllipseItem, QGraphicsItem, QGraphicsLineItem
+from PyQt6.QtWidgets import (
+    QGraphicsEllipseItem,
+    QGraphicsItem,
+    QGraphicsLineItem,
+    QGraphicsView,
+)
 
 
 class FDNode(QGraphicsEllipseItem):
@@ -8,7 +13,7 @@ class FDNode(QGraphicsEllipseItem):
     contains the single node object for the node graph
     """
 
-    def __init__(self, x, y, r, color="#3498DB") -> None:
+    def __init__(self, x, y, r) -> None:
         """
         constructor
 
@@ -19,7 +24,7 @@ class FDNode(QGraphicsEllipseItem):
         super().__init__(-r, -r, 2 * r, 2 * r)
 
         self.connections = []
-        self.setBrush(QBrush(QColor(color)))  # temp sublayer color
+        self.setBrush(QBrush(QColor("#404040")))  # temp sublayer color
         self.setPen(QPen(Qt.GlobalColor.black, 2))
         self.setFlag(self.GraphicsItemFlag.ItemIsMovable)
         self.setFlag(self.GraphicsItemFlag.ItemIsSelectable)
@@ -48,6 +53,15 @@ class FDNode(QGraphicsEllipseItem):
             for conn in self.connections:
                 conn.update_position()
         return super().itemChange(change, value)
+
+    def setInput(self, parent: QGraphicsView, input: QGraphicsEllipseItem) -> None:
+        """
+        Sets the node input
+
+        :param parent: The node graph instance where the node lives
+        :param input: The node to input to the current node
+        """
+        parent.scene().addItem(Connect(self, input))
 
 
 class Connect(QGraphicsLineItem):

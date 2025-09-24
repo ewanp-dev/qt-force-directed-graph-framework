@@ -1,6 +1,6 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QMouseEvent, QPainter, QWheelEvent
-from PyQt6.QtWidgets import QApplication, QGraphicsView
+from PyQt6.QtWidgets import QApplication, QGraphicsScene, QGraphicsView
 
 from node import Connect, FDNode
 
@@ -34,16 +34,6 @@ class FDGraphicsView(QGraphicsView):
         self._min_zoom: float = 0.1
         self._max_zoom: float = 10.0
         self._current_zoom: float = 1.0
-
-        # temp node creation for test
-        # TODO put this into createNode method
-        node_a: FDNode = FDNode(-100, 0, 40, "#3498DB")
-        node_b: FDNode = FDNode(150, 80, 40, "#E74C3C")
-        self.scene().addItem(node_a)
-        self.scene().addItem(node_b)
-
-        conn = Connect(node_a, node_b)
-        self.scene().addItem(conn)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """
@@ -113,12 +103,21 @@ class FDGraphicsView(QGraphicsView):
             delta = new_pos - old_pos
             self.translate(delta.x(), delta.y())
 
+    def createNode(self, x: float = 0.0, y: float = 0.0) -> FDNode:
+        """
+        Creates a node on the graph
+        """
+        node: FDNode = FDNode(x=x, y=y, r=40)
+        self.scene().addItem(node)
+        return node
+
 
 if __name__ == "__main__":
     import sys
 
     app = QApplication(sys.argv)
-    graph = FDGraphicsView()
+    graph = FDGraphicsView(scene=QGraphicsScene)
+
     graph.setWindowTitle("Node Graph")
     graph.resize(800, 800)
     graph.show()

@@ -15,8 +15,6 @@ class FDGraphicsScene(QGraphicsScene):
         """
         super().__init__(parent)
 
-        self._background_color = QColor("#393939")
-
         self.scene_width, self.scene_height = 64000, 64000
         self.setSceneRect(
             -self.scene_width // 2,
@@ -24,4 +22,10 @@ class FDGraphicsScene(QGraphicsScene):
             self.scene_width,
             self.scene_height,
         )
-        self.setBackgroundBrush(self._background_color)
+        self.setBackgroundColor("#1c2026")
+
+    def setBackgroundColor(self, color: str) -> None:
+        """
+        Set the background color of the nodegraph
+        """
+        self.setBackgroundBrush(QColor(color))

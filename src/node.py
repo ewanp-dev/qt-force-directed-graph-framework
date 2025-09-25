@@ -1,10 +1,16 @@
+from typing import List, Optional
+
 from PyQt6.QtCore import QPointF, Qt
-from PyQt6.QtGui import QBrush, QColor, QPen
+from PyQt6.QtGui import QBrush, QColor, QPainter, QPen
 from PyQt6.QtWidgets import (
     QGraphicsEllipseItem,
     QGraphicsItem,
     QGraphicsLineItem,
+    QGraphicsSceneHoverEvent,
+    QGraphicsSceneMouseEvent,
     QGraphicsView,
+    QStyleOptionGraphicsItem,
+    QWidget,
 )
 
 
@@ -23,16 +29,64 @@ class FDNode(QGraphicsEllipseItem):
         """
         super().__init__(-r, -r, 2 * r, 2 * r)
 
+        self.__node_color: str = "#bec4cf"
+        self.__hover_color: str = "#c9bf99"
+        self.__current_color = self.__node_color
         self.connections = []
-        self.setBrush(QBrush(QColor("#404040")))  # temp sublayer color
-        self.setPen(QPen(Qt.GlobalColor.black, 2))
+
         self.setFlag(self.GraphicsItemFlag.ItemIsMovable)
         self.setFlag(self.GraphicsItemFlag.ItemIsSelectable)
         self.setFlag(self.GraphicsItemFlag.ItemSendsGeometryChanges)
+        self.setAcceptHoverEvents(True)
         self.setPos(x, y)
 
     def center(self) -> QPointF:
         return self.scenePos()
+
+    def paint(
+        self,
+        painter: QPainter | None,
+        option: QStyleOptionGraphicsItem | None,
+        widget: QWidget | None = None,
+    ) -> None:
+        """
+        Paint event, removes selection outline
+        """
+        painter.setBrush(QBrush(QColor(self.__current_color)))
+        painter.setPen(QPen(QColor(self.__current_color), 2))
+        painter.drawEllipse(self.rect())
+
+    def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent) -> None:
+        """
+        The method that executes when a node is being hovered over
+
+        :param event: The event type
+        """
+        self.__current_color = self.__hover_color
+        self.update()
+        return super().hoverEnterEvent(event)
+
+    def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent) -> None:
+        self.__current_color = self.__node_color
+        self.update()
+        return super().hoverLeaveEvent(event)
+
+    def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        """
+        Method containing code that executes when the mouse is pressed on a node
+
+        :param event: The type of mouse press event
+        """
+        if event.button() != Qt.MouseButton.LeftButton:
+            return super().mousePressEvent(
+                event
+            )  # only supporting LMB for now, will update later
+        else:
+            # LMB button click execution code
+            pass
+
+    def mouseReleaseEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        return super().mouseReleaseEvent(event)
 
     def add_connection(self, connection) -> None:
         """
@@ -66,6 +120,16 @@ class FDNode(QGraphicsEllipseItem):
         print(self.parentItem())
         parent.scene().addItem(Connect(self, input))
 
+    def setInputs(self, inputs: List[QGraphicsEllipseItem]) -> None:
+        if not inputs:
+            return
+
+    def inputs(self) -> List[QGraphicsEllipseItem]:
+        """
+        Returns a list of inputs connected to the node
+        """
+        return [i.input for i in self.connections if self.connections]
+
     def setPosition(self, x: float, y: float) -> None:
         """
         Sets the position of the node
@@ -81,7 +145,7 @@ class Connect(QGraphicsLineItem):
     The graphics line connection between nodes
     """
 
-    def __init__(self, node_a: FDNode, node_b: FDNode) -> None:
+    def __init__(self, node: FDNode, input: FDNode) -> None:
         """
         Constructor
 
@@ -89,12 +153,12 @@ class Connect(QGraphicsLineItem):
         :param node_b: The node to connect to
         """
         super().__init__()
-        self.node_a = node_a
-        self.node_b = node_b
-        self.setPen(QPen(QColor("#dddddd"), 2))
+        self.node = node
+        self.input = input
+        self.setPen(QPen(QColor("#2c2f33"), 2))
         self.setZValue(-1)
-        node_a.add_connection(self)
-        node_b.add_connection(self)
+        node.add_connection(self)
+        input.add_connection(self)
         self.update_position()
 
     def update_position(self):
@@ -102,8 +166,8 @@ class Connect(QGraphicsLineItem):
         Updates the line position when the node object is moved
         """
         self.setLine(
-            self.node_a.center().x(),
-            self.node_a.center().y(),
-            self.node_b.center().x(),
-            self.node_b.center().y(),
+            self.node.center().x(),
+            self.node.center().y(),
+            self.input.center().x(),
+            self.input.center().y(),
         )

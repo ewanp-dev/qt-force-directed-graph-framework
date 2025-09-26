@@ -103,11 +103,13 @@ class FDGraphicsView(QGraphicsView):
             delta = new_pos - old_pos
             self.translate(delta.x(), delta.y())
 
-    def createNode(self, x: float = 0.0, y: float = 0.0) -> FDNode:
+    def createNode(
+        self, x: float = 0.0, y: float = 0.0, node_name: str = "node"
+    ) -> FDNode:
         """
         Creates a node on the graph
         """
-        node: FDNode = FDNode(x=x, y=y)
+        node: FDNode = FDNode(x=x, y=y, node_name=node_name)
         self.scene().addItem(node)
         return node
 

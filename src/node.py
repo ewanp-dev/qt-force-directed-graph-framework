@@ -56,20 +56,32 @@ class FDNode(QGraphicsEllipseItem):
         self.label.setDefaultTextColor(QColor(self.__node_color))
         self.__update_label_position()
 
-    def __update_label_position(self) -> None:
-        # self.rect().x() - self.label.boundingRect().width() / 2,
-        self.label.setPos(
-            self.rect().x() + 3,
-            self.rect().bottom() + 4,
-        )
+    def __update_label_position(self, y_pos: int = 4) -> None:
+        """
+        Updates the x and y position of the given node label
+
+        :param x_pos: Optional position argument for moving label on the y axis
+        """
+        node_rect = self.rect()
+        label_rect = self.label.boundingRect()
+
+        x = node_rect.center().x() - (label_rect.width() / 2)
+        y = node_rect.bottom() + y_pos
+        self.label.setPos(x, y)
 
     def setName(self, node_name: str) -> None:
+        """
+        Sets the name/label of the node
+
+        :param node_name: The label of the node
+        """
         self.node_name = node_name
         if len(self.node_name) > self.__char_limit:
             self.node_name = "".join(
                 [self.node_name[i] for i in range(self.__char_limit)]
             )
         self.label.setPlainText(self.node_name)
+        self.__update_label_position()
 
     def center(self) -> QPointF:
         return self.scenePos()
@@ -95,12 +107,14 @@ class FDNode(QGraphicsEllipseItem):
         """
         self.__current_color = self.__hover_color
         self.setCursor(Qt.CursorShape.OpenHandCursor)
+        self.__update_label_position(y_pos=6)
         self.update()
         return super().hoverEnterEvent(event)
 
     def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent) -> None:
         self.__current_color = self.__node_color
         self.unsetCursor()
+        self.__update_label_position()
         self.update()
         return super().hoverLeaveEvent(event)
 

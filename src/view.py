@@ -107,7 +107,7 @@ class FDGraphicsView(QGraphicsView):
         """
         Creates a node on the graph
         """
-        node: FDNode = FDNode(x=x, y=y, r=10)
+        node: FDNode = FDNode(x=x, y=y)
         self.scene().addItem(node)
         return node
 

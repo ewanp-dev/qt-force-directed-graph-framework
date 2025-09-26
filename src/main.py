@@ -47,7 +47,6 @@ if __name__ == "__main__":
     node_b = viewer.createNode()
     node_b.setPosition(-100, -50)
     node_a.setInput(parent=viewer, input=node_b)
-    print(node_a.inputs())
     graph.setWindowTitle("Node Graph")
     graph.resize(800, 800)
     graph.show()

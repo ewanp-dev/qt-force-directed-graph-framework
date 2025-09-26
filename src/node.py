@@ -19,7 +19,7 @@ class FDNode(QGraphicsEllipseItem):
     contains the single node object for the node graph
     """
 
-    def __init__(self, x, y, r) -> None:
+    def __init__(self, x: float, y: float, r: float = 20.0) -> None:
         """
         constructor
 
@@ -34,6 +34,8 @@ class FDNode(QGraphicsEllipseItem):
         self.__current_color = self.__node_color
         self.connections = []
 
+        self.x: float = x
+        self.y: float = y
         self.setFlag(self.GraphicsItemFlag.ItemIsMovable)
         self.setFlag(self.GraphicsItemFlag.ItemIsSelectable)
         self.setFlag(self.GraphicsItemFlag.ItemSendsGeometryChanges)
@@ -63,11 +65,13 @@ class FDNode(QGraphicsEllipseItem):
         :param event: The event type
         """
         self.__current_color = self.__hover_color
+        self.setCursor(Qt.CursorShape.OpenHandCursor)
         self.update()
         return super().hoverEnterEvent(event)
 
     def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent) -> None:
         self.__current_color = self.__node_color
+        self.unsetCursor()
         self.update()
         return super().hoverLeaveEvent(event)
 
@@ -86,6 +90,14 @@ class FDNode(QGraphicsEllipseItem):
             pass
 
     def mouseReleaseEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        """
+        Method that executes when the mouse button is released
+
+        :param event: The mouse event
+        """
+
+        # need to set this otherwise the node stays selected, moving the line constantly
+        self.setSelected(False)
         return super().mouseReleaseEvent(event)
 
     def add_connection(self, connection) -> None:
@@ -104,6 +116,7 @@ class FDNode(QGraphicsEllipseItem):
         :param value:
         """
         if change == self.GraphicsItemChange.ItemPositionHasChanged:
+            self.setSelected(False)
             for conn in self.connections:
                 conn.update_position()
         return super().itemChange(change, value)
@@ -115,9 +128,6 @@ class FDNode(QGraphicsEllipseItem):
         :param parent: The node graph instance where the node lives
         :param input: The node to input to the current node
         """
-        print(self.parentWidget())
-        print(self.parentObject())
-        print(self.parentItem())
         parent.scene().addItem(Connect(self, input))
 
     def setInputs(self, inputs: List[QGraphicsEllipseItem]) -> None:
@@ -138,6 +148,20 @@ class FDNode(QGraphicsEllipseItem):
         :param y: The position on the y axis
         """
         self.setPos(x, y)
+
+    def setNodeRadius(self, radius: float) -> None:
+        """
+        Sets the radius of the node, currently setting it to a stupid high value breaks the graph
+
+        :param radius: The radius of the node
+        """
+        if radius < 0.001:
+            radius = 0.001
+        elif radius > 150:
+            radius = 150
+
+        self.setRect(-radius / 2, -radius / 2, radius, radius)
+        return None
 
 
 class Connect(QGraphicsLineItem):

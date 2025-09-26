@@ -105,6 +105,8 @@ class FDNode(QGraphicsEllipseItem):
 
         :param event: The event type
         """
+        for i, conn in enumerate(self.connections):
+            conn.setLineColor(self.__hover_color)
         self.__current_color = self.__hover_color
         self.setCursor(Qt.CursorShape.OpenHandCursor)
         self.__update_label_position(y_pos=6)
@@ -112,6 +114,8 @@ class FDNode(QGraphicsEllipseItem):
         return super().hoverEnterEvent(event)
 
     def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent) -> None:
+        for i, conn in enumerate(self.connections):
+            conn.setDefaultColor()
         self.__current_color = self.__node_color
         self.unsetCursor()
         self.__update_label_position()
@@ -222,7 +226,8 @@ class Connect(QGraphicsLineItem):
         super().__init__()
         self.node = node
         self.input = input
-        self.setPen(QPen(QColor("#2c2f33"), 2))
+        self.__default_color: str = "#2c2f33"
+        self.setPen(QPen(QColor(self.__default_color), 2))
         self.setZValue(-1)
         node.add_connection(self)
         input.add_connection(self)
@@ -238,3 +243,17 @@ class Connect(QGraphicsLineItem):
             self.input.center().x(),
             self.input.center().y(),
         )
+
+    def setLineColor(self, color: str) -> None:
+        """
+        Sets the color of a line connecting a node
+
+        :param color: The hex color code of the line
+        """
+        self.setPen(QPen(QColor(color), 2))
+
+    def setDefaultColor(self) -> None:
+        """
+        Reverts the line back to its default color
+        """
+        self.setPen(QPen(QColor(self.__default_color), 2))

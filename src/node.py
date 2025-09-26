@@ -8,7 +8,9 @@ from PyQt6.QtWidgets import (
     QGraphicsLineItem,
     QGraphicsSceneHoverEvent,
     QGraphicsSceneMouseEvent,
+    QGraphicsTextItem,
     QGraphicsView,
+    QLabel,
     QStyleOptionGraphicsItem,
     QWidget,
 )
@@ -19,7 +21,9 @@ class FDNode(QGraphicsEllipseItem):
     contains the single node object for the node graph
     """
 
-    def __init__(self, x: float, y: float, r: float = 20.0) -> None:
+    def __init__(
+        self, x: float, y: float, r: float = 20.0, node_name: str = "node"
+    ) -> None:
         """
         constructor
 
@@ -32,15 +36,40 @@ class FDNode(QGraphicsEllipseItem):
         self.__node_color: str = "#bec4cf"
         self.__hover_color: str = "#c9bf99"
         self.__current_color = self.__node_color
+        self.__char_limit: int = 12
         self.connections = []
 
         self.x: float = x
         self.y: float = y
+        self.node_name: str = node_name
+        if len(self.node_name) > self.__char_limit:
+            self.node_name = "".join(
+                [self.node_name[i] for i in range(self.__char_limit)]
+            )
         self.setFlag(self.GraphicsItemFlag.ItemIsMovable)
         self.setFlag(self.GraphicsItemFlag.ItemIsSelectable)
         self.setFlag(self.GraphicsItemFlag.ItemSendsGeometryChanges)
         self.setAcceptHoverEvents(True)
-        self.setPos(x, y)
+        self.setPos(self.x, self.y)
+
+        self.label = QGraphicsTextItem(self.node_name, self)
+        self.label.setDefaultTextColor(QColor(self.__node_color))
+        self.__update_label_position()
+
+    def __update_label_position(self) -> None:
+        # self.rect().x() - self.label.boundingRect().width() / 2,
+        self.label.setPos(
+            self.rect().x() + 3,
+            self.rect().bottom() + 4,
+        )
+
+    def setName(self, node_name: str) -> None:
+        self.node_name = node_name
+        if len(self.node_name) > self.__char_limit:
+            self.node_name = "".join(
+                [self.node_name[i] for i in range(self.__char_limit)]
+            )
+        self.label.setPlainText(self.node_name)
 
     def center(self) -> QPointF:
         return self.scenePos()

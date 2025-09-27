@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from PyQt6.QtCore import QPointF, Qt
-from PyQt6.QtGui import QBrush, QColor, QPainter, QPen
+from PyQt6.QtGui import QBrush, QColor, QPainter, QPainterPath, QPen
 from PyQt6.QtWidgets import (
     QGraphicsEllipseItem,
     QGraphicsItem,
@@ -53,6 +53,7 @@ class FDNode(QGraphicsEllipseItem):
         self.setPos(self.x, self.y)
 
         self.label = QGraphicsTextItem(self.node_name, self)
+        self.label.setAcceptHoverEvents(False)
         self.label.setDefaultTextColor(QColor(self.__node_color))
         self.__update_label_position()
 
@@ -107,6 +108,8 @@ class FDNode(QGraphicsEllipseItem):
         """
         for i, conn in enumerate(self.connections):
             conn.setLineColor(self.__hover_color)
+            conn.input.__current_color = self.__hover_color
+
         self.__current_color = self.__hover_color
         self.setCursor(Qt.CursorShape.OpenHandCursor)
         self.__update_label_position(y_pos=6)
@@ -116,6 +119,7 @@ class FDNode(QGraphicsEllipseItem):
     def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent) -> None:
         for i, conn in enumerate(self.connections):
             conn.setDefaultColor()
+            conn.input.__current_color = self.__node_color
         self.__current_color = self.__node_color
         self.unsetCursor()
         self.__update_label_position()
@@ -167,6 +171,9 @@ class FDNode(QGraphicsEllipseItem):
             for conn in self.connections:
                 conn.update_position()
         return super().itemChange(change, value)
+
+    def setColor(self, color: str) -> None:
+        self.__current_color = color
 
     def setInput(self, parent: QGraphicsView, input: QGraphicsEllipseItem) -> None:
         """

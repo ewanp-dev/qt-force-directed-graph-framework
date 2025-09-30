@@ -118,8 +118,9 @@ class FDNode(QGraphicsEllipseItem):
 
     def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent) -> None:
         for i, conn in enumerate(self.connections):
-            conn.setDefaultColor()
-            conn.input.__current_color = self.__node_color
+            # conn.setDefaultColor()
+            conn.setLineColor(self.__node_color)
+            conn.input.setBrush(QBrush(QColor(self.__node_color)))
         self.__current_color = self.__node_color
         self.unsetCursor()
         self.__update_label_position()

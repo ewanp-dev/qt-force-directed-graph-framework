@@ -1,7 +1,11 @@
 from PyQt6.QtWidgets import QApplication, QVBoxLayout, QWidget
 
-from scene import FDGraphicsScene
-from view import FDGraphicsView
+try:
+    from scene import FDGraphicsScene
+    from view import FDGraphicsView
+except ModuleNotFoundError:
+    from .scene import FDGraphicsScene
+    from .view import FDGraphicsView
 
 
 class FDNodeGraphWidget(QWidget):

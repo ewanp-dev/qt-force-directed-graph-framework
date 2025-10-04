@@ -2,7 +2,10 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QMouseEvent, QPainter, QWheelEvent
 from PyQt6.QtWidgets import QApplication, QGraphicsScene, QGraphicsView
 
-from node import Connect, FDNode
+try:
+    from node import Connect, FDNode
+except ModuleNotFoundError:
+    from .node import Connect, FDNode
 
 
 class FDGraphicsView(QGraphicsView):

@@ -19,6 +19,7 @@ set(SOURCES
     src/force_directed_graph_qt/GraphWindow.cpp
     src/force_directed_graph_qt/ForceDirectedGraph.cpp
     src/force_directed_graph_qt/GraphicsView.cpp
+    src/force_directed_graph_qt/GraphicsScene.cpp
 )
 
 set(ENGINE_INCLUDE_DIRECTORIES

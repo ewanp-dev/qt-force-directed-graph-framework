@@ -2,6 +2,7 @@
 
 #include <QWidget>
 #include "GraphicsView.h"
+#include "GraphicsScene.h"
 #include <QGraphicsScene>
 
 class ForceDirectedGraph : public QWidget

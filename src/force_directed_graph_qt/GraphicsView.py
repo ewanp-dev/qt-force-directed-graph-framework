@@ -2,13 +2,11 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QMouseEvent, QPainter, QWheelEvent
 from PyQt6.QtWidgets import QApplication, QGraphicsScene, QGraphicsView
 
-try:
-    from node import Connect, FDNode
-except ModuleNotFoundError:
-    from .node import Connect, FDNode
+from .Node import Node
+from .Edge import Edge
 
 
-class FDGraphicsView(QGraphicsView):
+class GraphicsView(QGraphicsView):
     """
     The main nodegraph view
     """
@@ -108,11 +106,11 @@ class FDGraphicsView(QGraphicsView):
 
     def createNode(
         self, x: float = 0.0, y: float = 0.0, node_name: str = "node"
-    ) -> FDNode:
+    ) -> Node:
         """
         Creates a node on the graph
         """
-        node: FDNode = FDNode(x=x, y=y, node_name=node_name)
+        node: Node = Node(x=x, y=y, node_name=node_name)
         self.scene().addItem(node)
         return node
 
@@ -121,7 +119,7 @@ if __name__ == "__main__":
     import sys
 
     app = QApplication(sys.argv)
-    graph = FDGraphicsView(scene=QGraphicsScene)
+    graph = GraphicsView(scene=QGraphicsScene)
 
     graph.setWindowTitle("Node Graph")
     graph.resize(800, 800)

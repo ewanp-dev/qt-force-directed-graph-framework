@@ -5,13 +5,21 @@ import sys
 
 app = QApplication(sys.argv)
 graph = FDGraphWidget()
-viewer = graph.view
-node_a = viewer.createNode(node_name="Something")
-node_b = viewer.createNode()
-node_b.setName("node_a_name")
-node_b.setPosition(-100, -50)
-node_a.setInput(parent=viewer, input=node_b)
+
+# setup window
 graph.setWindowTitle("Node Graph")
 graph.resize(800, 800)
+
+# create nodes
+node_a = graph.createNode(node_name="Something")
+node_b = graph.createNode()
+
+# configure node_b
+node_b.setName("node_a_name")
+node_b.setPosition(-100, -50)
+
+# conections
+graph.connectNodes(node_a, node_b)
+
 graph.show()
 sys.exit(app.exec())

@@ -3,9 +3,9 @@ from PyQt6.QtGui import QMouseEvent, QPainter, QWheelEvent
 from PyQt6.QtWidgets import QApplication, QGraphicsScene, QGraphicsView
 
 try:
-    from node import Connect, FDNode
+    from node import Edge, FDNode
 except ModuleNotFoundError:
-    from .node import Connect, FDNode
+    from .node import Edge, FDNode
 
 
 class FDGraphicsView(QGraphicsView):

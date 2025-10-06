@@ -1,1 +1,1 @@
-from .widget import FDGraphWidget
+from .FDGraphWidget import FDGraphWidget

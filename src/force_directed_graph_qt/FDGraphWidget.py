@@ -1,12 +1,8 @@
 from PyQt6.QtWidgets import QApplication, QVBoxLayout, QWidget
 
-try:
-    from scene import FDGraphicsScene
-    from view import FDGraphicsView
-except ModuleNotFoundError:
-    from .scene import FDGraphicsScene
-    from .view import FDGraphicsView
-
+from .scene import FDGraphicsScene
+from .view import FDGraphicsView
+from .node import Edge, FDNode
 
 class FDGraphWidget(QWidget):
     """
@@ -34,4 +30,19 @@ class FDGraphWidget(QWidget):
         self.graphics_scene = FDGraphicsScene()
         self.view: FDGraphicsView = FDGraphicsView(self.graphics_scene, self)
         _lyt.addWidget(self.view)
+
+    def createNode(
+        self, x: float = 0.0, y: float = 0.0, node_name: str = "node"
+    ) -> FDNode:
+        """
+        Creates a new node on the graph.
+
+        Returns:
+            FDNode: Newly created node.
+        """
+
+        return self.view.createNode()
+
+    def connectNodes(self, start_node, end_node):
+        self.graphics_scene.addItem(Edge(start_node, end_node))
 

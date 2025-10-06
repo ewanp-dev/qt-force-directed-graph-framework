@@ -183,7 +183,7 @@ class FDNode(QGraphicsEllipseItem):
         :param parent: The node graph instance where the node lives
         :param input: The node to input to the current node
         """
-        parent.scene().addItem(Connect(self, input))
+        parent.scene().addItem(Edge(self, input))
 
     def setInputs(self, inputs: List[QGraphicsEllipseItem]) -> None:
         if not inputs:
@@ -219,7 +219,7 @@ class FDNode(QGraphicsEllipseItem):
         return None
 
 
-class Connect(QGraphicsLineItem):
+class Edge(QGraphicsLineItem):
     """
     The graphics line connection between nodes
     """

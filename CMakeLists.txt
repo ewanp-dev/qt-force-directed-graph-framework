@@ -17,6 +17,7 @@ set(ENZO_DEV_LIB_DIR "${CMAKE_SOURCE_DIR}/build/src/OpDefs/")
 
 set(SOURCES
     src/force_directed_graph_qt/GraphWindow.cpp
+    src/force_directed_graph_qt/ForceDirectedGraph.cpp
 )
 
 set(ENGINE_INCLUDE_DIRECTORIES

@@ -1,12 +1,14 @@
 #include <QApplication>
 #include <QPushButton>
 
+#include "ForceDirectedGraph.h"
+
 int main(int argc, char **argv)
 {
     QApplication app (argc, argv);
 
-    QPushButton button ("Hello world !");
-    button.show();
+    ForceDirectedGraph* graph = new ForceDirectedGraph();
+    graph->show();
 
     return app.exec();
 }

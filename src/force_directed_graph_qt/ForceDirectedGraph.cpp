@@ -6,10 +6,20 @@
 
 ForceDirectedGraph::ForceDirectedGraph()
 {
-    view_ = new QGraphicsView();
+    view_ = new GraphicsView();
     scene_ = new QGraphicsScene();
+
+    // temporary
+    int size = 1000;
+    scene_->setSceneRect(
+        -size,
+        -size,
+        size,
+        size
+    );
+
     view_->setScene(scene_);
-    scene_->addRect(0,0,20,20);
+    scene_->addRect(-100,-100,20,20, QPen("red"));
 
     QVBoxLayout* mainLayout = new QVBoxLayout();
     QPushButton* button = new QPushButton ("Hello world !");
@@ -22,5 +32,6 @@ ForceDirectedGraph::ForceDirectedGraph()
 
 void ForceDirectedGraph::addNode()
 {
+    // placeholder
     std::cout << "creating node\n";
 }

@@ -1,5 +1,7 @@
+#pragma once
+
 #include <QWidget>
-#include <QGraphicsView>
+#include "GraphicsView.h"
 #include <QGraphicsScene>
 
 class ForceDirectedGraph : public QWidget
@@ -10,6 +12,6 @@ public:
     void addNode();
 
 private:
-    QGraphicsView* view_;
+    GraphicsView* view_;
     QGraphicsScene* scene_;
 };

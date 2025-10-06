@@ -1,37 +1,26 @@
 #include "ForceDirectedGraph.h"
 
-#include <iostream>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <iostream>
 
-ForceDirectedGraph::ForceDirectedGraph()
-{
-    view_ = new GraphicsView();
-    scene_ = new QGraphicsScene();
+ForceDirectedGraph::ForceDirectedGraph() {
+  view_ = new GraphicsView();
+  scene_ = new GraphicsScene();
 
-    // temporary
-    int size = 1000;
-    scene_->setSceneRect(
-        -size,
-        -size,
-        size,
-        size
-    );
+  view_->setScene(scene_);
+  scene_->addRect(-100, -100, 20, 20, QPen("red"));
 
-    view_->setScene(scene_);
-    scene_->addRect(-100,-100,20,20, QPen("red"));
+  QVBoxLayout *mainLayout = new QVBoxLayout();
+  QPushButton *button = new QPushButton("Hello world !");
 
-    QVBoxLayout* mainLayout = new QVBoxLayout();
-    QPushButton* button = new QPushButton ("Hello world !");
+  mainLayout->addWidget(button);
+  mainLayout->addWidget(view_);
 
-    mainLayout->addWidget(button);
-    mainLayout->addWidget(view_);
-
-    setLayout(mainLayout);
+  setLayout(mainLayout);
 }
 
-void ForceDirectedGraph::addNode()
-{
-    // placeholder
-    std::cout << "creating node\n";
+void ForceDirectedGraph::addNode() {
+  // placeholder
+  std::cout << "creating node\n";
 }

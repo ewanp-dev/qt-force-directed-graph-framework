@@ -9,8 +9,8 @@ GraphicsView::GraphicsView(QWidget *parent) : QGraphicsView(parent) {
                  QPainter::RenderHint::SmoothPixmapTransform);
 
   setDragMode(QGraphicsView::DragMode::NoDrag);
-  // setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
-  // setVerticalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
+  setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
+  setVerticalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
 }
 
 void GraphicsView::mousePressEvent(QMouseEvent *event) {

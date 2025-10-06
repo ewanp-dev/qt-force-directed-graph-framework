@@ -1,18 +1,19 @@
 #pragma once
 
 #include <QWidget>
+#include <QGraphicsScene>
 #include "GraphicsView.h"
 #include "GraphicsScene.h"
-#include <QGraphicsScene>
+#include "Node.h"
 
 class ForceDirectedGraph : public QWidget
 {
 public:
     ForceDirectedGraph();
 
-    void addNode();
+    Node* addNode(std::string name);
 
 private:
     GraphicsView* view_;
-    QGraphicsScene* scene_;
+    GraphicsScene* scene_;
 };

@@ -1,19 +1,24 @@
-#pragma once
+#ifndef NODE_H
+#define NODE_H
 #include <QGraphicsEllipseItem>
+#include <QGraphicsView>
+#include <vector>
+
+class Edge;
 
 class Node : public QGraphicsEllipseItem
 {
     public:
-        Node(std::string &nodeName, qreal x, qreal y, qreal w, qreal h, QGraphicsItem* parent = nullptr);
+        Node(std::string &nodeName, qreal x = 0, qreal y = 0, qreal w = 20.0, qreal h = 20.0, QGraphicsItem* parent = nullptr);
         void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
         void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
         void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
         void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-        void paint(QPainter *painter, QStyleOptionGraphicsItem *option, QWidget *widget);
-        void itemChange(GraphicsItemChange *change, const QVariant &value);
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+        QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
         void setName(std::string& name);
-        void setPosition(float x, float y);
         void setNodeRadius(float radius);
+        void addConnection(Edge* connection); // maybe move into private
         QPointF center();
         float x;
         float y;
@@ -25,7 +30,8 @@ class Node : public QGraphicsEllipseItem
         std::string hoverColor_;
         std::string currentColor_;
         int charLimit_;
-
+        std::vector<Edge*> connections_;
         QGraphicsTextItem* label_;
 
 };
+#endif

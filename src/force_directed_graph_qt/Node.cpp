@@ -1,10 +1,9 @@
 #include "Node.h"
+#include "Edge.h"
 #include <QGraphicsTextItem>
 #include <QGraphicsSceneMouseEvent>
-#include <GraphicsItemChange>
 #include <QPainter>
 #include <QCursor>
-#include <iostream>
 #include <qnamespace.h>
 
 Node::Node(std::string &nodeName, qreal x, qreal y, qreal w, qreal h, QGraphicsItem* parent) : QGraphicsEllipseItem(-w, -h, 2 * w, 2 * h, parent) {
@@ -57,18 +56,21 @@ void Node::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsEllipseItem::mouseReleaseEvent(event);
 } 
 
-void Node::paint(QPainter *painter, QStyleOptionGraphicsItem *option, QWidget *widget) {
+void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
     painter->setBrush(QBrush(QColor(currentColor_.c_str())));
-    // NEEDS FIXING
-    painter->setPen(QPen(QColor(currentColor_.c_str()), 2));
+    painter->setPen(QPen(QColor(currentColor_.c_str())));
     painter->drawEllipse(rect());
 }
 
-void Node::itemChange(GraphicsItemChange *change, const QVariant &value) {
+QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value) {
     // NEEDS FIXING
     if (change == GraphicsItemChange::ItemPositionHasChanged) {
         setSelected(false);
+        for (Edge* conn : connections_) {
+            conn->updatePosition();
+        }
     }
+    return QGraphicsEllipseItem::itemChange(change, value);
 }
 
 void Node::updateLabelPosition_(int y_pos) {
@@ -87,6 +89,20 @@ void Node::setName(std::string& name) {
     }
     label_->setPlainText(nodeName.c_str());
     updateLabelPosition_(4);
+}
+
+void Node::setNodeRadius(float radius) {
+    if (radius < 0.001) {
+        radius = 0.001;
+    } else if (radius > 150) {
+        radius = 150;
+    }
+
+    setRect(-radius / 2, -radius / 2, radius, radius);
+}
+
+void Node::addConnection(Edge* connection) {
+    connections_.push_back(connection);
 }
 
 QPointF Node::center() {

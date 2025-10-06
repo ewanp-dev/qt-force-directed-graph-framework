@@ -2,7 +2,7 @@ from PyQt6.QtGui import QColor
 from PyQt6.QtWidgets import QGraphicsScene
 
 
-class FDGraphicsScene(QGraphicsScene):
+class GraphicsScene(QGraphicsScene):
     """
     Contains all of the settings for the nodegraph scene
     """

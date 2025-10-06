@@ -1,10 +1,11 @@
 from PyQt6.QtWidgets import QApplication, QVBoxLayout, QWidget
 
-from .scene import FDGraphicsScene
-from .view import FDGraphicsView
-from .node import Edge, FDNode
+from .GraphicsScene import GraphicsScene
+from .GraphicsView import GraphicsView
+from .Node import Node
+from .Edge import Edge
 
-class FDGraphWidget(QWidget):
+class ForceDirectedGraph(QWidget):
     """
     The standard FD node graph widget
     """
@@ -27,13 +28,13 @@ class FDGraphWidget(QWidget):
         self.setContentsMargins(0, 0, 0, 0)
         _lyt = QVBoxLayout(self)
         _lyt.setContentsMargins(0, 0, 0, 0)
-        self.graphics_scene = FDGraphicsScene()
-        self.view: FDGraphicsView = FDGraphicsView(self.graphics_scene, self)
+        self.graphics_scene = GraphicsScene()
+        self.view: GraphicsView = GraphicsView(self.graphics_scene, self)
         _lyt.addWidget(self.view)
 
     def createNode(
         self, x: float = 0.0, y: float = 0.0, node_name: str = "node"
-    ) -> FDNode:
+    ) -> Node:
         """
         Creates a new node on the graph.
 

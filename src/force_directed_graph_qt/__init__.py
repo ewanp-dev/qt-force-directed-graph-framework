@@ -1,1 +1,1 @@
-from .FDGraphWidget import FDGraphWidget
+from .ForceDirectedGraph import ForceDirectedGraph

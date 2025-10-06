@@ -1,10 +1,10 @@
-from force_directed_graph_qt import FDGraphWidget
+from force_directed_graph_qt import ForceDirectedGraph
 from PyQt6.QtWidgets import QApplication, QVBoxLayout, QWidget
 
 import sys
 
 app = QApplication(sys.argv)
-graph = FDGraphWidget()
+graph = ForceDirectedGraph()
 
 # setup window
 graph.setWindowTitle("Node Graph")

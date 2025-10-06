@@ -1,5 +1,4 @@
 #include "GraphicsScene.h"
-#include <iostream>
 #include <QColor>
 
 GraphicsScene::GraphicsScene(QObject *parent) : QGraphicsScene(parent) {

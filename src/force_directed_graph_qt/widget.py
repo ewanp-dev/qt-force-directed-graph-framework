@@ -8,7 +8,7 @@ except ModuleNotFoundError:
     from .view import FDGraphicsView
 
 
-class FDNodeGraphWidget(QWidget):
+class FDGraphWidget(QWidget):
     """
     The standard FD node graph widget
     """
@@ -35,24 +35,3 @@ class FDNodeGraphWidget(QWidget):
         self.view: FDGraphicsView = FDGraphicsView(self.graphics_scene, self)
         _lyt.addWidget(self.view)
 
-
-if __name__ == "__main__":
-    """
-    TODO
-    -- remove need for parent argument on connect node
-    -- add in method for auto layout of nodes
-    """
-    import sys
-
-    app = QApplication(sys.argv)
-    graph = FDNodeGraphWidget()
-    viewer = graph.view
-    node_a = viewer.createNode(node_name="Something")
-    node_b = viewer.createNode()
-    node_b.setName("node_a_name")
-    node_b.setPosition(-100, -50)
-    node_a.setInput(parent=viewer, input=node_b)
-    graph.setWindowTitle("Node Graph")
-    graph.resize(800, 800)
-    graph.show()
-    sys.exit(app.exec())

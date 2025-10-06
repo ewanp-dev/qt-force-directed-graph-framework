@@ -1,0 +1,7 @@
+[project]
+name = "force-directed-graph-qt"
+version = "0.1.0"
+description = "A framework for building force directed graphs in PyQt."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["PyQt6"]

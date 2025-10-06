@@ -1,5 +1,5 @@
 from force_directed_graph_qt import ForceDirectedGraph
-from PyQt6.QtWidgets import QApplication, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import QApplication
 
 import sys
 

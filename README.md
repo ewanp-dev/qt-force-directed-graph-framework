@@ -1,9 +1,18 @@
 <div align="center">
-  <img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue" />
+  <h1> Force Directed Graph Qt </h1>
+</div>
+<div align="center">
+  <img src="https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=cplusplus&logoColor=white" />
   <img src="https://img.shields.io/badge/Qt-41CD52?style=for-the-badge&logo=qt&logoColor=white"/>
 </div>
+<br>
 
----
+This repository provides classes for creating force-directed node graphs in Qt.
 
+> [!NOTE]
+> Early WIP
 
-A Qt based force-directed node graph UI framework.
+## Dependencies
+- Ninja (build)
+- TBB
+- Qt6

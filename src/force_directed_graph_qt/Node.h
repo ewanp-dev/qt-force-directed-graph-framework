@@ -23,6 +23,7 @@ class Node : public QGraphicsEllipseItem
         float x;
         float y;
         std::string nodeName;
+        QPointF velocity;
         
     private:
         void updateLabelPosition_(int y_pos);

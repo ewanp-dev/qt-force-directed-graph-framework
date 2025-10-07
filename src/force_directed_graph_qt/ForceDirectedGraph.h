@@ -12,6 +12,7 @@ public:
     ForceDirectedGraph();
 
     Node* addNode(std::string name);
+    void connectNodes(Node* startNode, Node* endNode);
 
 private:
     GraphicsView* view_;

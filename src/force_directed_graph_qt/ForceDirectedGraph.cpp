@@ -2,6 +2,7 @@
 
 #include <QPushButton>
 #include <QVBoxLayout>
+#include "Edge.h"
 
 ForceDirectedGraph::ForceDirectedGraph() {
     view_ = new GraphicsView();
@@ -23,4 +24,9 @@ Node* ForceDirectedGraph::addNode(std::string name) {
     Node* node = new Node(name);
     scene_->addItem(node);
     return node;
+}
+
+void ForceDirectedGraph::connectNodes(Node* startNode, Node* endNode)
+{
+    scene_->addItem(new Edge(startNode, endNode));
 }

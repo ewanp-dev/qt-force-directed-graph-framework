@@ -22,7 +22,7 @@ Node::Node(std::string &nodeName, qreal x, qreal y, qreal w, qreal h, QGraphicsI
     setAcceptHoverEvents(true);
     setPos(x, y);
 
-    label_ = new QGraphicsTextItem(nodeName.c_str());
+    label_ = new QGraphicsTextItem(nodeName.c_str(), this);
     label_->setAcceptHoverEvents(true);
     label_->setDefaultTextColor(QColor(nodeColor_.c_str()));
     int yOffset = 4;

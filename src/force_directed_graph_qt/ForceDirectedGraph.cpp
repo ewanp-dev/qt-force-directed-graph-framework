@@ -30,3 +30,9 @@ void ForceDirectedGraph::connectNodes(Node* startNode, Node* endNode)
 {
     scene_->addItem(new Edge(startNode, endNode));
 }
+
+void ForceDirectedGraph::connectMultipleNodes(Node* startNode, std::vector<Node*> endNodes) {
+    for (Node* node : endNodes) {
+        scene_->addItem(new Edge(startNode, node));
+    } 
+}

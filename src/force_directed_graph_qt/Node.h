@@ -10,12 +10,6 @@ class Node : public QGraphicsEllipseItem
 {
     public:
         Node(std::string &nodeName, qreal x = 0, qreal y = 0, qreal w = 20.0, qreal h = 20.0, QGraphicsItem* parent = nullptr);
-        void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
-        void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
-        void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-        void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-        QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
         void setName(std::string& name);
         void setNodeRadius(float radius);
         void addConnection(Edge* connection); // maybe move into private
@@ -25,6 +19,12 @@ class Node : public QGraphicsEllipseItem
         std::string nodeName;
         
     private:
+        void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+        void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+        void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+        QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
         void updateLabelPosition_(int y_pos);
         std::string nodeColor_;
         std::string hoverColor_;

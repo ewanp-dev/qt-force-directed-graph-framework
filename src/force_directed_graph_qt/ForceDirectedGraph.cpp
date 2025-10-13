@@ -60,28 +60,6 @@ void ForceDirectedGraph::connectMultipleNodes(Node* startNode, std::vector<Node*
     } 
 }
 
-void ForceDirectedGraph::advanceNode(double dt, Node* node)
-{
-    // TODO: QPointF may be slow, we should do benchmarking/replace it with a faster vector class
-
-    QPointF velocityDelta;
-    for (Node* otherNode : nodeStore_) {
-        if(node==otherNode)
-        {
-            continue;
-        }
-
-        QPointF repelDirection = node->pos()-otherNode->pos();
-        const float length = sqrt(repelDirection.x()*repelDirection.x() + repelDirection.y()*repelDirection.y());
-        repelDirection /= length; // normalize
-        velocityDelta += repelDirection;
-    }
-
-    QPointF pos = node->pos();
-    node->velocity+=velocityDelta*-dt;
-    node->setPos(pos+node->velocity);
-}
-
 QPointF ForceDirectedGraph::computeRepulsion(Node *node) 
 {
     const double kRepel = 400.0;
@@ -162,10 +140,6 @@ void ForceDirectedGraph::tick() {
     double speedMultiplier = 1.5; // speed up or slow down the graph
     const double dt = ( ns * 1e-9 ) * speedMultiplier;
 
-    // Update your graph (apply forces, integrate positions)
-    // for (Node* node : nodeStore_) {
-        // advanceNode(dt, node);
-    // }
     updatePhysics(dt);
 
     // Trigger a redraw

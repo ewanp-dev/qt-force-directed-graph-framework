@@ -20,7 +20,6 @@ public:
 private:
     void tick();
     void initSimulation();
-    void advanceNode(double dt, Node* node);
     void updatePhysics(double dt);
     QPointF computeRepulsion(Node *node);
     QPointF computeAttraction(Node *node);

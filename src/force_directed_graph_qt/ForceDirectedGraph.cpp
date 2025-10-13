@@ -1,7 +1,10 @@
 #include "ForceDirectedGraph.h"
 
 #include <QPushButton>
+#include <QTimer>
 #include <QVBoxLayout>
+#include <cmath>
+#include <iostream>
 #include "Edge.h"
 
 ForceDirectedGraph::ForceDirectedGraph() {
@@ -17,12 +20,32 @@ ForceDirectedGraph::ForceDirectedGraph() {
     mainLayout->addWidget(view_);
 
     setLayout(mainLayout);
+
+    initSimulation();
+}
+
+void ForceDirectedGraph::initSimulation()
+{
+    // init timer
+    timer_ = new QTimer(this);
+    timer_->setTimerType(Qt::PreciseTimer);
+    connect(timer_, &QTimer::timeout, this, &ForceDirectedGraph::tick);
+
+    const int fps = 60;
+
+    // pause between ticks in milliseconds
+    constexpr int interval = static_cast<float>(1000)/60;
+
+    elapsed_.start();
+    timer_->start(interval);
+
 }
 
 Node* ForceDirectedGraph::addNode(std::string name) {
     // placeholder
     Node* node = new Node(name);
     scene_->addItem(node);
+    nodeStore_.push_back(node);
     return node;
 }
 
@@ -35,4 +58,116 @@ void ForceDirectedGraph::connectMultipleNodes(Node* startNode, std::vector<Node*
     for (Node* node : endNodes) {
         scene_->addItem(new Edge(startNode, node));
     } 
+}
+
+void ForceDirectedGraph::advanceNode(double dt, Node* node)
+{
+    // TODO: QPointF may be slow, we should do benchmarking/replace it with a faster vector class
+
+    QPointF velocityDelta;
+    for (Node* otherNode : nodeStore_) {
+        if(node==otherNode)
+        {
+            continue;
+        }
+
+        QPointF repelDirection = node->pos()-otherNode->pos();
+        const float length = sqrt(repelDirection.x()*repelDirection.x() + repelDirection.y()*repelDirection.y());
+        repelDirection /= length; // normalize
+        velocityDelta += repelDirection;
+    }
+
+    QPointF pos = node->pos();
+    node->velocity+=velocityDelta*-dt;
+    node->setPos(pos+node->velocity);
+}
+
+QPointF ForceDirectedGraph::computeRepulsion(Node *node) 
+{
+    const double kRepel = 400.0;
+    QPointF velocityDelta(0.0, 0.0);
+
+    for (Node* otherNode : nodeStore_) {
+        if (node == otherNode) {
+            continue;
+        }
+
+        QPointF repelDirection = node->pos() - otherNode->pos();
+        const float length = sqrt(repelDirection.x()*repelDirection.x() + repelDirection.y()*repelDirection.y());
+
+        repelDirection /= length;
+        double magnitude = kRepel / length;
+
+        velocityDelta += repelDirection * magnitude;
+    }
+
+    return velocityDelta;
+}
+
+QPointF ForceDirectedGraph::computeAttraction(Node *node)
+{
+    const double kSpring = 0.05;
+    const double restLength = 80.0; // distance between nodes
+
+    QPointF velocityDelta(0.0, 0.0);
+
+    for (Edge* edge : node->connections) {
+        Node* other = (edge->node == node) ? edge->input : edge->node;
+        
+        QPointF repelDirection = other->pos() - node->pos();
+        const float length = sqrt(repelDirection.x()*repelDirection.x() + repelDirection.y()*repelDirection.y());
+        repelDirection /= length;
+
+        double magnitude = kSpring * (length - restLength);
+        QPointF springForce = repelDirection * magnitude;
+
+        velocityDelta += springForce;
+    }
+
+    return velocityDelta;
+}
+
+QPointF ForceDirectedGraph::computeCenterGravity(Node *node)
+{
+    QPointF center(scene_->sceneRect().center());
+    QPointF delta = center - node->pos();
+    const double gravity = 0.01;
+    return delta * gravity;
+}
+
+void ForceDirectedGraph::updatePhysics(double dt) 
+{
+    // TODO: Stop nodes from glitching when moved too far away from nearest input
+    // TODO: Stop simulation when node speed gets to a certain threshold
+    for (Node* node : nodeStore_) {
+        QPointF repulsiveForce = computeRepulsion(node);
+        QPointF attractiveForce = computeAttraction(node);
+        QPointF gravityForce = computeCenterGravity(node);
+
+        QPointF totalForce = repulsiveForce + attractiveForce + gravityForce;
+
+        node->velocity += totalForce * dt;
+        node->velocity *= 0.9;
+        node->setPos(node->pos() + node->velocity);
+
+        double speed = std::hypot(node->velocity.x(), node->velocity.y());
+    }
+}
+
+void ForceDirectedGraph::tick() {
+    const qint64 ns = elapsed_.nsecsElapsed();
+    elapsed_.restart();
+
+    // ns to seconds
+    double speedMultiplier = 1.5; // speed up or slow down the graph
+    const double dt = ( ns * 1e-9 ) * speedMultiplier;
+
+    // Update your graph (apply forces, integrate positions)
+    // for (Node* node : nodeStore_) {
+        // advanceNode(dt, node);
+    // }
+    updatePhysics(dt);
+
+    // Trigger a redraw
+    scene_->update();
 }

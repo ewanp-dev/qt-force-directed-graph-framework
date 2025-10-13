@@ -66,7 +66,7 @@ QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value) {
     // NEEDS FIXING
     if (change == GraphicsItemChange::ItemPositionHasChanged) {
         setSelected(false);
-        for (Edge* conn : connections_) {
+        for (Edge* conn : connections) {
             conn->updatePosition();
         }
     }
@@ -102,7 +102,7 @@ void Node::setNodeRadius(float radius) {
 }
 
 void Node::addConnection(Edge* connection) {
-    connections_.push_back(connection);
+    connections.push_back(connection);
 }
 
 QPointF Node::center() {

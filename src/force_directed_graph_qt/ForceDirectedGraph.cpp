@@ -5,6 +5,8 @@
 #include <QVBoxLayout>
 #include <cmath>
 #include <iostream>
+#include <unordered_set>
+#include <string>
 #include "Edge.h"
 
 ForceDirectedGraph::ForceDirectedGraph() {
@@ -45,6 +47,10 @@ Node* ForceDirectedGraph::addNode(std::string name) {
     // placeholder
     Node* node = new Node(name);
     scene_->addItem(node);
+
+    connect(node, &Node::hoverEntered, this, &ForceDirectedGraph::onNodeHoverEnter);
+    connect(node, &Node::hoverLeft, this, &ForceDirectedGraph::onNodeHoverLeave);
+
     nodeStore_.push_back(node);
     return node;
 }
@@ -137,11 +143,36 @@ void ForceDirectedGraph::tick() {
     elapsed_.restart();
 
     // ns to seconds
-    double speedMultiplier = 1.5; // speed up or slow down the graph
+    double speedMultiplier = 10; // speed up or slow down the graph
     const double dt = ( ns * 1e-9 ) * speedMultiplier;
 
     updatePhysics(dt);
 
     // Trigger a redraw
     scene_->update();
+}
+
+void ForceDirectedGraph::onNodeHoverEnter(Node *hoveredNode) {
+    /*
+    TODO: 
+    > Deselect all other nodes in the nodegraph (change the color to red for now)
+    */
+    std::unordered_set<Node*> family;
+    for (Edge *connection : hoveredNode->connections) {
+        family.insert(connection->node);
+    }
+
+    for (Node *node : nodeStore_) {
+        if (family.find(node) != family.end()) {
+            node->setColor("#c9bf99");
+        } else {
+            node->setColor("#202020");
+        }
+    }
+}
+
+void ForceDirectedGraph::onNodeHoverLeave(Node *hoveredNode) {
+    for (Node *node : nodeStore_) {
+        node->setDefaultColor();
+    }
 }

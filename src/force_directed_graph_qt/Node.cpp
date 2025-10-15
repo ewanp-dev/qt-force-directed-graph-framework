@@ -10,7 +10,6 @@ Node::Node(std::string &nodeName, qreal x, qreal y, qreal w, qreal h, QGraphicsI
     this->nodeName = nodeName; 
     nodeColor_ = "#bec4cf";
     hoverColor_ = "#c9bf99";
-    currentColor_ = nodeColor_;
     charLimit_ = 12;
 
     this->x = static_cast<float>(x);
@@ -21,6 +20,7 @@ Node::Node(std::string &nodeName, qreal x, qreal y, qreal w, qreal h, QGraphicsI
     setFlag(GraphicsItemFlag::ItemSendsGeometryChanges);
     setAcceptHoverEvents(true);
     setPos(x, y);
+    setColor(nodeColor_);
 
     label_ = new QGraphicsTextItem(nodeName.c_str(), this);
     label_->setAcceptHoverEvents(true);
@@ -30,7 +30,8 @@ Node::Node(std::string &nodeName, qreal x, qreal y, qreal w, qreal h, QGraphicsI
 }
 
 void Node::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-    currentColor_ = hoverColor_;
+    hoverEntered(this);
+    setColor(hoverColor_);
     setCursor(Qt::CursorShape::OpenHandCursor);
     updateLabelPosition_(6);
     update();
@@ -38,7 +39,8 @@ void Node::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 }
 
 void Node::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
-    currentColor_ = nodeColor_;
+    hoverLeft(this);
+    setDefaultColor();
     unsetCursor();
     updateLabelPosition_(4);
     update();
@@ -55,12 +57,6 @@ void Node::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     setSelected(false);
     QGraphicsEllipseItem::mouseReleaseEvent(event);
 } 
-
-void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-    painter->setBrush(QBrush(QColor(currentColor_.c_str())));
-    painter->setPen(QPen(QColor(currentColor_.c_str())));
-    painter->drawEllipse(rect());
-}
 
 QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value) {
     // NEEDS FIXING
@@ -109,5 +105,15 @@ QPointF Node::center() {
     return scenePos();
 } 
 
+void Node::setColor(const std::string &color) {
+    QColor qcolor(color.c_str());
+    setBrush(QBrush(qcolor));
+    update();
+}
+
+void Node::setDefaultColor() {
+    QColor qcolor(nodeColor_.c_str());
+    setBrush(QBrush(qcolor));
+}
 
 

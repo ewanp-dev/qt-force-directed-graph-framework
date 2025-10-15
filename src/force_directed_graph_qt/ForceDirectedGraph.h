@@ -21,6 +21,8 @@ private:
     void tick();
     void initSimulation();
     void updatePhysics(double dt);
+    void onNodeHoverEnter(Node *hoveredNode);
+    void onNodeHoverLeave(Node *hoveredNode);
     QPointF computeRepulsion(Node *node);
     QPointF computeAttraction(Node *node);
     QPointF computeCenterGravity(Node *node);

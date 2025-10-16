@@ -1,6 +1,7 @@
 #include "Edge.h"
 #include "Node.h"
 #include <QPen>
+#include <QVariantAnimation>
 
 Edge::Edge(Node* node, Node* input) {
     this->node = node;
@@ -28,6 +29,21 @@ void Edge::setLineColor(std::string color) {
 
 void Edge::setDefaultColor() {
     setLineColor(defaultColor_);
+}
+
+void Edge::fadeColor(const QColor &start, const QColor &end, int duration) {
+    auto *anim = new QVariantAnimation();
+    anim->setDuration(duration);
+    anim->setStartValue(start);
+    anim->setEndValue(end);
+
+    connect(anim, &QVariantAnimation::valueChanged, this, [this](const QVariant &value) {
+        QColor c = value.value<QColor>();
+        this->setPen(QPen(c, 2));
+        this->update();
+    });
+
+    anim->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 

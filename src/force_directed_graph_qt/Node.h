@@ -22,6 +22,7 @@ class Node : public QObject, public QGraphicsEllipseItem
         void addConnection(Edge* connection); // maybe move into private
         void setDefaultColor();
         void setColor(const std::string &color);
+        void fadeColor(const QColor &start, const QColor &end, int duration = 150);
         QPointF center();
         float x;
         float y;

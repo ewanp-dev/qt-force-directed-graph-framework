@@ -2,11 +2,13 @@
 #define EDGE_H
 
 #include <QGraphicsLineItem>
+#include <QObject>
 
 class Node;
 
-class Edge : public QGraphicsLineItem
+class Edge : public QObject, public QGraphicsLineItem
 {
+    Q_OBJECT
     public:
         Edge(Node* node, Node* input);
         Node* node;
@@ -14,6 +16,7 @@ class Edge : public QGraphicsLineItem
         void updatePosition();
         void setLineColor(std::string color);
         void setDefaultColor();
+        void fadeColor(const QColor &start, const QColor &end, int duration = 150);
     private:
         std::string defaultColor_;
 };

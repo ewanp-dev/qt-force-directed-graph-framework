@@ -2,9 +2,11 @@
 #include "Edge.h"
 #include <QGraphicsTextItem>
 #include <QGraphicsSceneMouseEvent>
+#include <QVariantAnimation>
 #include <QPainter>
 #include <QCursor>
 #include <qnamespace.h>
+#include <iostream>
 
 Node::Node(std::string &nodeName, qreal x, qreal y, qreal w, qreal h, QGraphicsItem* parent) : QGraphicsEllipseItem(-w, -h, 2 * w, 2 * h, parent) {
     this->nodeName = nodeName; 
@@ -19,11 +21,12 @@ Node::Node(std::string &nodeName, qreal x, qreal y, qreal w, qreal h, QGraphicsI
     setFlag(GraphicsItemFlag::ItemIsSelectable);
     setFlag(GraphicsItemFlag::ItemSendsGeometryChanges);
     setAcceptHoverEvents(true);
+    setPen(Qt::NoPen);
     setPos(x, y);
     setColor(nodeColor_);
 
     label_ = new QGraphicsTextItem(nodeName.c_str(), this);
-    label_->setAcceptHoverEvents(true);
+    label_->setAcceptHoverEvents(false);
     label_->setDefaultTextColor(QColor(nodeColor_.c_str()));
     int yOffset = 4;
     updateLabelPosition_(yOffset);
@@ -109,6 +112,28 @@ void Node::setColor(const std::string &color) {
     QColor qcolor(color.c_str());
     setBrush(QBrush(qcolor));
     update();
+}
+
+void Node::fadeColor(const QColor &start, const QColor &end, int duration) {
+    /*
+    TODO:
+    > this is not the fastest way of going about this right now, integrate with QTimer at some point
+    */
+    auto *anim = new QVariantAnimation(this);
+    anim->setDuration(duration);
+    anim->setStartValue(start);
+    anim->setEndValue(end);
+
+    connect(anim, &QVariantAnimation::valueChanged, this, [this](const QVariant &value) {
+        QColor c = value.value<QColor>();
+        this->setBrush(QBrush(c));
+        if (label_) {
+            label_->setDefaultTextColor(c);
+        }
+        this->update();
+    });
+
+    anim->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 void Node::setDefaultColor() {

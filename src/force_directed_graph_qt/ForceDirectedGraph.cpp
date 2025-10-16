@@ -159,20 +159,25 @@ void ForceDirectedGraph::onNodeHoverEnter(Node *hoveredNode) {
     */
     std::unordered_set<Node*> family;
     for (Edge *connection : hoveredNode->connections) {
+        connection->fadeColor(QColor("#2c2f33"), QColor("#c9bf99"));
         family.insert(connection->node);
     }
 
     for (Node *node : nodeStore_) {
         if (family.find(node) != family.end()) {
-            node->setColor("#c9bf99");
+            node->fadeColor(QColor("#bec4cf"), QColor("#c9bf99"));
         } else {
-            node->setColor("#202020");
+            node->fadeColor(QColor("#bec4cf"), QColor("#404040"));
         }
     }
 }
 
 void ForceDirectedGraph::onNodeHoverLeave(Node *hoveredNode) {
+    for (Edge *connection : hoveredNode->connections) {
+        connection->fadeColor(QColor("#c9bf99"), QColor("#2c2f33"));
+    }
+
     for (Node *node : nodeStore_) {
-        node->setDefaultColor();
+        node->fadeColor(node->brush().color(), QColor("#bec4cf"));
     }
 }

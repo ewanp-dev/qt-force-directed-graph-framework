@@ -143,7 +143,7 @@ void ForceDirectedGraph::tick() {
     elapsed_.restart();
 
     // ns to seconds
-    double speedMultiplier = 10; // speed up or slow down the graph
+    double speedMultiplier = 5; // speed up or slow down the graph
     const double dt = ( ns * 1e-9 ) * speedMultiplier;
 
     updatePhysics(dt);
@@ -153,10 +153,9 @@ void ForceDirectedGraph::tick() {
 }
 
 void ForceDirectedGraph::onNodeHoverEnter(Node *hoveredNode) {
-    /*
-    TODO: 
-    > Deselect all other nodes in the nodegraph (change the color to red for now)
-    */
+    // FIX: Edge highlighting is currently highlighting both input
+    // and output whereas it should be outputs only
+
     std::unordered_set<Node*> family;
     for (Edge *connection : hoveredNode->connections) {
         connection->fadeColor(QColor("#2c2f33"), QColor("#c9bf99"));

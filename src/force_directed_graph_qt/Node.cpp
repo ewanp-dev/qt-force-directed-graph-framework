@@ -6,28 +6,29 @@
 #include <QPainter>
 #include <QCursor>
 #include <qnamespace.h>
-#include <iostream>
 
-Node::Node(std::string &nodeName, qreal x, qreal y, qreal w, qreal h, QGraphicsItem* parent) : QGraphicsEllipseItem(-w, -h, 2 * w, 2 * h, parent) {
-    this->nodeName = nodeName; 
+Node::Node(std::string &nodeName, qreal x, qreal y, qreal w, qreal h, QGraphicsItem* parent) 
+: QGraphicsEllipseItem(-w, -h, 2 * w, 2 * h, parent) 
+{
+    nodeName_ = nodeName; 
+    x_ = static_cast<float>(x);
+    y_ = static_cast<float>(y);
     nodeColor_ = "#bec4cf";
     hoverColor_ = "#c9bf99";
     charLimit_ = 12;
 
-    this->x = static_cast<float>(x);
-    this->y = static_cast<float>(y);
-    
     setFlag(GraphicsItemFlag::ItemIsMovable);
     setFlag(GraphicsItemFlag::ItemIsSelectable);
     setFlag(GraphicsItemFlag::ItemSendsGeometryChanges);
     setAcceptHoverEvents(true);
     setPen(Qt::NoPen);
-    setPos(x, y);
+    setPos(x_, y_);
     setColor(nodeColor_);
 
-    label_ = new QGraphicsTextItem(nodeName.c_str(), this);
+    label_ = new QGraphicsTextItem(nodeName_.c_str(), this);
     label_->setAcceptHoverEvents(false);
     label_->setDefaultTextColor(QColor(nodeColor_.c_str()));
+
     int yOffset = 4;
     updateLabelPosition_(yOffset);
 }
@@ -62,7 +63,6 @@ void Node::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
 } 
 
 QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value) {
-    // NEEDS FIXING
     if (change == GraphicsItemChange::ItemPositionHasChanged) {
         setSelected(false);
         for (Edge* conn : connections) {
@@ -82,12 +82,16 @@ void Node::updateLabelPosition_(int y_pos) {
 }
 
 void Node::setName(std::string& name) {
-    nodeName = name;
-    if (nodeName.length() > this->charLimit_) {
-        nodeName = nodeName.substr(0, 12);
+    nodeName_ = name;
+    if (nodeName_.length() > this->charLimit_) {
+        nodeName_ = nodeName_.substr(0, 12);
     }
-    label_->setPlainText(nodeName.c_str());
+    label_->setPlainText(nodeName_.c_str());
     updateLabelPosition_(4);
+}
+
+std::string Node::nodeName() {
+    return nodeName_;
 }
 
 void Node::setNodeRadius(float radius) {
@@ -115,10 +119,7 @@ void Node::setColor(const std::string &color) {
 }
 
 void Node::fadeColor(const QColor &start, const QColor &end, int duration) {
-    /*
-    TODO:
-    > this is not the fastest way of going about this right now, integrate with QTimer at some point
-    */
+    // TODO: This is not the fastest way of going about this right now, integrate with QTimer at some point
     auto *anim = new QVariantAnimation(this);
     anim->setDuration(duration);
     anim->setStartValue(start);

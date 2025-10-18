@@ -1,5 +1,4 @@
-#ifndef EDGE_H
-#define EDGE_H
+#pragma once
 
 #include <QGraphicsLineItem>
 #include <QObject>
@@ -20,5 +19,3 @@ class Edge : public QObject, public QGraphicsLineItem
     private:
         std::string defaultColor_;
 };
-
-#endif

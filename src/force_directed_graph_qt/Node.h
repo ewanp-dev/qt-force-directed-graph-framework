@@ -17,7 +17,6 @@ class Node : public QObject, public QGraphicsEllipseItem
     public:
         Node(std::string &nodeName, qreal x = 0, qreal y = 0, qreal w = 20.0, 
              qreal h = 20.0, QGraphicsItem* parent = nullptr);
-        ~Node() override = default;
 
         void setName(std::string& name);
         void setNodeRadius(float radius);

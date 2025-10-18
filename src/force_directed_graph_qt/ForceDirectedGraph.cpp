@@ -4,12 +4,11 @@
 #include <QTimer>
 #include <QVBoxLayout>
 #include <cmath>
-#include <iostream>
 #include <unordered_set>
 #include <string>
 #include "Edge.h"
 
-ForceDirectedGraph::ForceDirectedGraph() {
+ForceDirectedGraph::ForceDirectedGraph(QWidget* parent) {
     view_ = new GraphicsView();
     scene_ = new GraphicsScene();
     setContentsMargins(0, 0, 0, 0);
@@ -60,7 +59,7 @@ void ForceDirectedGraph::connectNodes(Node* startNode, Node* endNode)
     scene_->addItem(new Edge(startNode, endNode));
 }
 
-void ForceDirectedGraph::connectMultipleNodes(Node* startNode, std::vector<Node*> endNodes) {
+void ForceDirectedGraph::connectMultipleNodes(Node* startNode, const std::vector<Node*> &endNodes) {
     for (Node* node : endNodes) {
         scene_->addItem(new Edge(startNode, node));
     } 

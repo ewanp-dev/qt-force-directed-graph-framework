@@ -8,15 +8,10 @@
 #include <qnamespace.h>
 
 Node::Node(std::string &nodeName, qreal x, qreal y, qreal w, qreal h, QGraphicsItem* parent) 
-: QGraphicsEllipseItem(-w, -h, 2 * w, 2 * h, parent) 
+    : QGraphicsEllipseItem(-w, -h, 2 * w, 2 * h, parent), nodeName_(nodeName),
+    x_(static_cast<float>(x)), y_(static_cast<float>(y)), nodeColor_("#bec4cf"),
+    hoverColor_("#c9bf99"), charLimit_(12), label_(new QGraphicsTextItem(nodeName_.c_str(), this))
 {
-    nodeName_ = nodeName; 
-    x_ = static_cast<float>(x);
-    y_ = static_cast<float>(y);
-    nodeColor_ = "#bec4cf";
-    hoverColor_ = "#c9bf99";
-    charLimit_ = 12;
-
     setFlag(GraphicsItemFlag::ItemIsMovable);
     setFlag(GraphicsItemFlag::ItemIsSelectable);
     setFlag(GraphicsItemFlag::ItemSendsGeometryChanges);
@@ -25,12 +20,10 @@ Node::Node(std::string &nodeName, qreal x, qreal y, qreal w, qreal h, QGraphicsI
     setPos(x_, y_);
     setColor(nodeColor_);
 
-    label_ = new QGraphicsTextItem(nodeName_.c_str(), this);
     label_->setAcceptHoverEvents(false);
     label_->setDefaultTextColor(QColor(nodeColor_.c_str()));
 
-    int yOffset = 4;
-    updateLabelPosition_(yOffset);
+    updateLabelPosition_(4);
 }
 
 void Node::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
@@ -95,12 +88,7 @@ std::string Node::nodeName() {
 }
 
 void Node::setNodeRadius(float radius) {
-    if (radius < 0.001) {
-        radius = 0.001;
-    } else if (radius > 150) {
-        radius = 150;
-    }
-
+    radius = (radius < 0.001) ? 0.001 : (radius > 150) ? 150 : radius;
     setRect(-radius / 2, -radius / 2, radius, radius);
 }
 

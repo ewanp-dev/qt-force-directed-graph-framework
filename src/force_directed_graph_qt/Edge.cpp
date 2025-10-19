@@ -3,10 +3,9 @@
 #include <QPen>
 #include <QVariantAnimation>
 
-Edge::Edge(Node* node, Node* input) {
-    this->node = node;
-    this->input = input;
-    this->defaultColor_ = "#2c2f33";
+Edge::Edge(Node* node, Node* input) 
+    : node(node), input(input), defaultColor_("#2c2f33")
+{
     node->addConnection(this);
     input->addConnection(this);
     setPen(QPen(QColor(defaultColor_.c_str()), 2));

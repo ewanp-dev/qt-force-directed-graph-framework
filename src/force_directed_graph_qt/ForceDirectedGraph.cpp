@@ -8,9 +8,9 @@
 #include <string>
 #include "Edge.h"
 
-ForceDirectedGraph::ForceDirectedGraph(QWidget* parent) {
-    view_ = new GraphicsView();
-    scene_ = new GraphicsScene();
+ForceDirectedGraph::ForceDirectedGraph(QWidget* parent) 
+    : view_(new GraphicsView()), scene_(new GraphicsScene())
+{
     setContentsMargins(0, 0, 0, 0);
 
     view_->setScene(scene_);

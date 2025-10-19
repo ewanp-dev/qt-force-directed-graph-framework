@@ -43,7 +43,6 @@ class Node : public QObject, public QGraphicsEllipseItem
         std::string nodeName_;
         std::string nodeColor_;
         std::string hoverColor_;
-        std::string currentColor_;
         int charLimit_, x_, y_;
         QGraphicsTextItem* label_;
 };

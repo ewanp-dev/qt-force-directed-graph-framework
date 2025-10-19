@@ -21,7 +21,6 @@ class ForceDirectedGraph : public QWidget
         void onNodeHoverEnter(Node* hoveredNode);
         void onNodeHoverLeave(Node* hoveredNode);
 
-
     private:
         void tick();
         void initSimulation();

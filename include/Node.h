@@ -21,16 +21,22 @@ class Node : public QObject, public QGraphicsEllipseItem
         void setName(std::string& name);
         void setNodeRadius(float radius);
         void addConnection(Edge* connection);
+        void addInput(Edge* input);
+        void addOutput(Edge* output);
+        std::vector<Edge*> inputs();
+        std::vector<Edge*> outputs();
+        std::vector<Edge*> connections();
         void setDefaultColor();
         void setColor(const std::string &color);
         void fadeColor(const QColor &start, const QColor &end, int duration = 150);
         std::string nodeName();
         QPointF center();
+        bool isDragging() const;
 
-        std::vector<Edge*> connections;
         QPointF velocity;
 
     protected:
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
         void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
         void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
         void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

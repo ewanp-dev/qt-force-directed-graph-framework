@@ -3,6 +3,7 @@
 #include <QGraphicsEllipseItem>
 #include <QGraphicsView>
 #include <QObject>
+#include <QVariantAnimation>
 #include <vector>
 
 class Edge;
@@ -21,16 +22,22 @@ class Node : public QObject, public QGraphicsEllipseItem
         void setName(std::string& name);
         void setNodeRadius(float radius);
         void addConnection(Edge* connection);
+        void addInput(Edge* input);
+        void addOutput(Edge* output);
+        std::vector<Edge*> inputs();
+        std::vector<Edge*> outputs();
+        std::vector<Edge*> connections();
         void setDefaultColor();
         void setColor(const std::string &color);
         void fadeColor(const QColor &start, const QColor &end, int duration = 150);
         std::string nodeName();
         QPointF center();
+        bool isDragging() const;
 
-        std::vector<Edge*> connections;
         QPointF velocity;
 
     protected:
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
         void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
         void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
         void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
@@ -43,6 +50,11 @@ class Node : public QObject, public QGraphicsEllipseItem
         std::string nodeName_;
         std::string nodeColor_;
         std::string hoverColor_;
+        std::vector<Edge*> inputs_;
+        std::vector<Edge*> outputs_;
+        std::vector<Edge*> connections_;
         int charLimit_, x_, y_;
+        bool isDragging_ = false;
         QGraphicsTextItem* label_;
+        QVariantAnimation* animation_ = nullptr;
 };

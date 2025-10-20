@@ -31,9 +31,7 @@ class ForceDirectedGraph : public QWidget
 
         QTimer* timer_;
         QElapsedTimer elapsed_;
-        double accumulator_ = 0.0;
         std::vector<Node*> nodeStore_;
-        const double step_ = 1.0 / 120.0;
 
         GraphicsView* view_;
         GraphicsScene* scene_;

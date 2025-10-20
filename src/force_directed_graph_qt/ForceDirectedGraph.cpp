@@ -1,4 +1,5 @@
 #include "ForceDirectedGraph.h"
+#include "Edge.h"
 
 #include <QPushButton>
 #include <QTimer>
@@ -6,7 +7,7 @@
 #include <cmath>
 #include <unordered_set>
 #include <string>
-#include "Edge.h"
+#include <iostream>
 
 ForceDirectedGraph::ForceDirectedGraph(QWidget* parent) 
     : view_(new GraphicsView()), scene_(new GraphicsScene())
@@ -94,7 +95,7 @@ QPointF ForceDirectedGraph::computeAttraction(Node *node)
 
     QPointF velocityDelta(0.0, 0.0);
 
-    for (Edge* edge : node->connections) {
+    for (Edge* edge : node->connections()) {
         Node* other = (edge->node == node) ? edge->input : edge->node;
         
         QPointF repelDirection = other->pos() - node->pos();
@@ -131,7 +132,10 @@ void ForceDirectedGraph::updatePhysics(double dt)
 
         node->velocity += totalForce * dt;
         node->velocity *= 0.9;
+        if (!node->isDragging()) 
+        {
         node->setPos(node->pos() + node->velocity);
+        }
 
         double speed = std::hypot(node->velocity.x(), node->velocity.y());
     }
@@ -155,8 +159,9 @@ void ForceDirectedGraph::onNodeHoverEnter(Node *hoveredNode) {
     // FIX: Edge highlighting is currently highlighting both input
     // and output whereas it should be outputs only
 
-    std::unordered_set<Node*> family;
-    for (Edge *connection : hoveredNode->connections) {
+    std::cout << hoveredNode->isActive() << '\n';
+    std::unordered_set<Node*> family = { hoveredNode };
+    for (Edge *connection : hoveredNode->outputs()) {
         connection->fadeColor(QColor("#2c2f33"), QColor("#c9bf99"));
         family.insert(connection->node);
     }
@@ -171,7 +176,7 @@ void ForceDirectedGraph::onNodeHoverEnter(Node *hoveredNode) {
 }
 
 void ForceDirectedGraph::onNodeHoverLeave(Node *hoveredNode) {
-    for (Edge *connection : hoveredNode->connections) {
+    for (Edge *connection : hoveredNode->outputs()) {
         connection->fadeColor(QColor("#c9bf99"), QColor("#2c2f33"));
     }
 

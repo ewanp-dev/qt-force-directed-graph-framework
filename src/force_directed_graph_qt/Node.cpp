@@ -2,16 +2,17 @@
 #include "Edge.h"
 #include <QGraphicsTextItem>
 #include <QGraphicsSceneMouseEvent>
-#include <QVariantAnimation>
+#include <QStyleOptionGraphicsItem>
 #include <QPainter>
 #include <QCursor>
 #include <qnamespace.h>
 
 Node::Node(std::string &nodeName, qreal x, qreal y, qreal w, qreal h, QGraphicsItem* parent) 
-    : QGraphicsEllipseItem(-w, -h, 2 * w, 2 * h, parent), nodeName_(nodeName),
-    x_(static_cast<float>(x)), y_(static_cast<float>(y)), nodeColor_("#bec4cf"),
+    : QGraphicsEllipseItem(parent), nodeName_(nodeName),
+    x_(x), y_(y), nodeColor_("#bec4cf"),
     hoverColor_("#c9bf99"), charLimit_(12), label_(new QGraphicsTextItem(nodeName_.c_str(), this))
 {
+    setRect(-w, -h, 2 * w, 2 * h);
     setFlag(GraphicsItemFlag::ItemIsMovable);
     setFlag(GraphicsItemFlag::ItemIsSelectable);
     setFlag(GraphicsItemFlag::ItemSendsGeometryChanges);
@@ -24,6 +25,12 @@ Node::Node(std::string &nodeName, qreal x, qreal y, qreal w, qreal h, QGraphicsI
     label_->setDefaultTextColor(QColor(nodeColor_.c_str()));
 
     updateLabelPosition_(4);
+}
+
+void Node::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
+    QStyleOptionGraphicsItem opt(*option);
+    opt.state &= ~QStyle::State_Selected;
+    QGraphicsEllipseItem::paint(painter, &opt, widget);
 }
 
 void Node::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
@@ -45,20 +52,24 @@ void Node::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 }
 
 void Node::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    
     if (event->button() != Qt::MouseButton::LeftButton) {
         QGraphicsEllipseItem::mousePressEvent(event);
+    } else {
+        isDragging_ = true;
     }
 }
 
 void Node::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     setSelected(false);
+    isDragging_ = false;
     QGraphicsEllipseItem::mouseReleaseEvent(event);
 } 
 
 QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value) {
     if (change == GraphicsItemChange::ItemPositionHasChanged) {
         setSelected(false);
-        for (Edge* conn : connections) {
+        for (Edge* conn : connections_) {
             conn->updatePosition();
         }
     }
@@ -87,13 +98,33 @@ std::string Node::nodeName() {
     return nodeName_;
 }
 
-void Node::setNodeRadius(float radius) {
-    radius = (radius < 0.001) ? 0.001 : (radius > 150) ? 150 : radius;
-    setRect(-radius / 2, -radius / 2, radius, radius);
+void Node::addInput(Edge* input) {
+    inputs_.push_back(input);
+}
+
+void Node::addOutput(Edge* output) {
+    outputs_.push_back(output);
 }
 
 void Node::addConnection(Edge* connection) {
-    connections.push_back(connection);
+    connections_.push_back(connection);
+}
+
+std::vector<Edge*> Node::inputs() {
+    return inputs_;
+}
+
+std::vector<Edge*> Node::outputs() {
+    return outputs_;
+}
+
+std::vector<Edge*> Node::connections() {
+    return connections_;
+}
+
+void Node::setNodeRadius(float radius) {
+    radius = (radius < 0.001) ? 0.001 : (radius > 150) ? 150 : radius;
+    setRect(-radius / 2, -radius / 2, radius, radius);
 }
 
 QPointF Node::center() {
@@ -107,22 +138,39 @@ void Node::setColor(const std::string &color) {
 }
 
 void Node::fadeColor(const QColor &start, const QColor &end, int duration) {
-    // TODO: This is not the fastest way of going about this right now, integrate with QTimer at some point
-    auto *anim = new QVariantAnimation(this);
-    anim->setDuration(duration);
-    anim->setStartValue(start);
-    anim->setEndValue(end);
+    // NOTE: Added the animation is a member, deleting it before starting another fadeColor
+    // as this was causing the enter and leave animations to overlap 
 
-    connect(anim, &QVariantAnimation::valueChanged, this, [this](const QVariant &value) {
+    // TODO: This is not the fastest way of going about this right now, integrate with QTimer at some point
+    if ( animation_ )
+    {
+        animation_->stop();
+        animation_->deleteLater();
+    }
+
+    animation_ = new QVariantAnimation(this);
+    animation_->setDuration(duration);
+    animation_->setStartValue(start);
+    animation_->setEndValue(end);
+
+    connect(animation_, &QVariantAnimation::valueChanged, this, [this](const QVariant &value) 
+    {
         QColor c = value.value<QColor>();
-        this->setBrush(QBrush(c));
-        if (label_) {
+        setBrush(QBrush(c));
+        if (label_) 
+        {
             label_->setDefaultTextColor(c);
         }
-        this->update();
+        update();
     });
 
-    anim->start(QAbstractAnimation::DeleteWhenStopped);
+    connect(animation_, &QVariantAnimation::finished, this, [this]() 
+    {
+        animation_->deleteLater();
+        animation_ = nullptr;
+    });
+
+    animation_->start();
 }
 
 void Node::setDefaultColor() {
@@ -130,4 +178,7 @@ void Node::setDefaultColor() {
     setBrush(QBrush(qcolor));
 }
 
+bool Node::isDragging() const {
+    return isDragging_;
+}
 

@@ -2,35 +2,40 @@
 #include "Edge.h"
 #include <QGraphicsTextItem>
 #include <QGraphicsSceneMouseEvent>
+#include <QStyleOptionGraphicsItem>
 #include <QPainter>
 #include <QCursor>
 #include <qnamespace.h>
 
-Node::Node(std::string &nodeName, qreal x, qreal y, qreal w, qreal h, QGraphicsItem* parent) : QGraphicsEllipseItem(-w, -h, 2 * w, 2 * h, parent) {
-    this->nodeName = nodeName; 
-    nodeColor_ = "#bec4cf";
-    hoverColor_ = "#c9bf99";
-    currentColor_ = nodeColor_;
-    charLimit_ = 12;
-
-    this->x = static_cast<float>(x);
-    this->y = static_cast<float>(y);
-    
+Node::Node(std::string &nodeName, qreal x, qreal y, qreal w, qreal h, QGraphicsItem* parent) 
+    : QGraphicsEllipseItem(parent), nodeName_(nodeName),
+    x_(x), y_(y), nodeColor_("#bec4cf"),
+    hoverColor_("#c9bf99"), charLimit_(12), label_(new QGraphicsTextItem(nodeName_.c_str(), this))
+{
+    setRect(-w, -h, 2 * w, 2 * h);
     setFlag(GraphicsItemFlag::ItemIsMovable);
     setFlag(GraphicsItemFlag::ItemIsSelectable);
     setFlag(GraphicsItemFlag::ItemSendsGeometryChanges);
     setAcceptHoverEvents(true);
-    setPos(x, y);
+    setPen(Qt::NoPen);
+    setPos(x_, y_);
+    setColor(nodeColor_);
 
-    label_ = new QGraphicsTextItem(nodeName.c_str(), this);
-    label_->setAcceptHoverEvents(true);
+    label_->setAcceptHoverEvents(false);
     label_->setDefaultTextColor(QColor(nodeColor_.c_str()));
-    int yOffset = 4;
-    updateLabelPosition_(yOffset);
+
+    updateLabelPosition_(4);
+}
+
+void Node::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
+    QStyleOptionGraphicsItem opt(*option);
+    opt.state &= ~QStyle::State_Selected;
+    QGraphicsEllipseItem::paint(painter, &opt, widget);
 }
 
 void Node::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-    currentColor_ = hoverColor_;
+    hoverEntered(this);
+    setColor(hoverColor_);
     setCursor(Qt::CursorShape::OpenHandCursor);
     updateLabelPosition_(6);
     update();
@@ -38,7 +43,8 @@ void Node::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 }
 
 void Node::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
-    currentColor_ = nodeColor_;
+    hoverLeft(this);
+    setDefaultColor();
     unsetCursor();
     updateLabelPosition_(4);
     update();
@@ -46,24 +52,21 @@ void Node::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 }
 
 void Node::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    
     if (event->button() != Qt::MouseButton::LeftButton) {
         QGraphicsEllipseItem::mousePressEvent(event);
+    } else {
+        isDragging_ = true;
     }
 }
 
 void Node::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     setSelected(false);
+    isDragging_ = false;
     QGraphicsEllipseItem::mouseReleaseEvent(event);
 } 
 
-void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-    painter->setBrush(QBrush(QColor(currentColor_.c_str())));
-    painter->setPen(QPen(QColor(currentColor_.c_str())));
-    painter->drawEllipse(rect());
-}
-
 QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value) {
-    // NEEDS FIXING
     if (change == GraphicsItemChange::ItemPositionHasChanged) {
         setSelected(false);
         for (Edge* conn : connections_) {
@@ -83,31 +86,99 @@ void Node::updateLabelPosition_(int y_pos) {
 }
 
 void Node::setName(std::string& name) {
-    nodeName = name;
-    if (nodeName.length() > this->charLimit_) {
-        nodeName = nodeName.substr(0, 12);
+    nodeName_ = name;
+    if (nodeName_.length() > this->charLimit_) {
+        nodeName_ = nodeName_.substr(0, 12);
     }
-    label_->setPlainText(nodeName.c_str());
+    label_->setPlainText(nodeName_.c_str());
     updateLabelPosition_(4);
 }
 
-void Node::setNodeRadius(float radius) {
-    if (radius < 0.001) {
-        radius = 0.001;
-    } else if (radius > 150) {
-        radius = 150;
-    }
+std::string Node::getName() {
+    return nodeName_;
+}
 
-    setRect(-radius / 2, -radius / 2, radius, radius);
+void Node::addInput(Edge* input) {
+    inputs_.push_back(input);
+}
+
+void Node::addOutput(Edge* output) {
+    outputs_.push_back(output);
 }
 
 void Node::addConnection(Edge* connection) {
     connections_.push_back(connection);
 }
 
-QPointF Node::center() {
+std::vector<Edge*> Node::getInputs() {
+    return inputs_;
+}
+
+std::vector<Edge*> Node::getOutputs() {
+    return outputs_;
+}
+
+std::vector<Edge*> Node::getConnections() {
+    return connections_;
+}
+
+void Node::setNodeRadius(float radius) {
+    radius = (radius < 0.001) ? 0.001 : (radius > 150) ? 150 : radius;
+    setRect(-radius / 2, -radius / 2, radius, radius);
+}
+
+QPointF Node::getCenterPosition() {
     return scenePos();
 } 
 
+void Node::setColor(const std::string &color) {
+    QColor qcolor(color.c_str());
+    setBrush(QBrush(qcolor));
+    update();
+}
 
+void Node::setFadeColor(const QColor &start, const QColor &end, int duration) {
+    // NOTE: Added the animation is a member, deleting it before starting another fadeColor
+    // as this was causing the enter and leave animations to overlap 
+
+    // TODO: This is not the fastest way of going about this right now, integrate with QTimer at some point
+    if ( animation_ )
+    {
+        animation_->stop();
+        animation_->deleteLater();
+    }
+
+    animation_ = new QVariantAnimation(this);
+    animation_->setDuration(duration);
+    animation_->setStartValue(start);
+    animation_->setEndValue(end);
+
+    connect(animation_, &QVariantAnimation::valueChanged, this, [this](const QVariant &value) 
+    {
+        QColor c = value.value<QColor>();
+        setBrush(QBrush(c));
+        if (label_) 
+        {
+            label_->setDefaultTextColor(c);
+        }
+        update();
+    });
+
+    connect(animation_, &QVariantAnimation::finished, this, [this]() 
+    {
+        animation_->deleteLater();
+        animation_ = nullptr;
+    });
+
+    animation_->start();
+}
+
+void Node::setDefaultColor() {
+    QColor qcolor(nodeColor_.c_str());
+    setBrush(QBrush(qcolor));
+}
+
+bool Node::isDragging() const {
+    return isDragging_;
+}
 

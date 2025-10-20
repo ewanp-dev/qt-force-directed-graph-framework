@@ -8,9 +8,9 @@ int main(int argc, char **argv)
 {
     QApplication app (argc, argv);
 
-    int ROWS = 100;
-    int COLUMNS = 100;
-    int GAP = 100;
+    int ROWS = 5;
+    int COLUMNS = 5;
+    int GAP = 20;
 
     ForceDirectedGraph* graph = new ForceDirectedGraph();
 

@@ -94,7 +94,7 @@ void Node::setName(std::string& name) {
     updateLabelPosition_(4);
 }
 
-std::string Node::nodeName() {
+std::string Node::getName() {
     return nodeName_;
 }
 
@@ -110,15 +110,15 @@ void Node::addConnection(Edge* connection) {
     connections_.push_back(connection);
 }
 
-std::vector<Edge*> Node::inputs() {
+std::vector<Edge*> Node::getInputs() {
     return inputs_;
 }
 
-std::vector<Edge*> Node::outputs() {
+std::vector<Edge*> Node::getOutputs() {
     return outputs_;
 }
 
-std::vector<Edge*> Node::connections() {
+std::vector<Edge*> Node::getConnections() {
     return connections_;
 }
 
@@ -127,7 +127,7 @@ void Node::setNodeRadius(float radius) {
     setRect(-radius / 2, -radius / 2, radius, radius);
 }
 
-QPointF Node::center() {
+QPointF Node::getCenterPosition() {
     return scenePos();
 } 
 
@@ -137,7 +137,7 @@ void Node::setColor(const std::string &color) {
     update();
 }
 
-void Node::fadeColor(const QColor &start, const QColor &end, int duration) {
+void Node::setFadeColor(const QColor &start, const QColor &end, int duration) {
     // NOTE: Added the animation is a member, deleting it before starting another fadeColor
     // as this was causing the enter and leave animations to overlap 
 

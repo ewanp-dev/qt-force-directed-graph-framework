@@ -15,5 +15,5 @@ class Edge : public QObject, public QGraphicsLineItem
         void updatePosition();
         void setLineColor(std::string color);
         void setDefaultColor();
-        void fadeColor(const QColor &start, const QColor &end, int duration = 150);
+        void setFadeColor(const QColor &start, const QColor &end, int duration = 150);
 };

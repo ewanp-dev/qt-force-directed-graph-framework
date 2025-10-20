@@ -24,14 +24,14 @@ class Node : public QObject, public QGraphicsEllipseItem
         void addConnection(Edge* connection);
         void addInput(Edge* input);
         void addOutput(Edge* output);
-        std::vector<Edge*> inputs();
-        std::vector<Edge*> outputs();
-        std::vector<Edge*> connections();
+        std::vector<Edge*> getInputs();
+        std::vector<Edge*> getOutputs();
+        std::vector<Edge*> getConnections();
         void setDefaultColor();
         void setColor(const std::string &color);
-        void fadeColor(const QColor &start, const QColor &end, int duration = 150);
-        std::string nodeName();
-        QPointF center();
+        void setFadeColor(const QColor &start, const QColor &end, int duration = 150);
+        std::string getName();
+        QPointF getCenterPosition();
         bool isDragging() const;
 
         QPointF velocity;

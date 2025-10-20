@@ -17,10 +17,10 @@ Edge::Edge(Node* node, Node* input)
 
 void Edge::updatePosition() {
     setLine(
-        node->center().x(),
-        node->center().y(),
-        input->center().x(),
-        input->center().y()
+        node->getCenterPosition().x(),
+        node->getCenterPosition().y(),
+        input->getCenterPosition().x(),
+        input->getCenterPosition().y()
     );
 }
 
@@ -32,7 +32,7 @@ void Edge::setDefaultColor() {
     setLineColor(defaultColor_);
 }
 
-void Edge::fadeColor(const QColor &start, const QColor &end, int duration) {
+void Edge::setFadeColor(const QColor &start, const QColor &end, int duration) {
     auto *anim = new QVariantAnimation();
     anim->setDuration(duration);
     anim->setStartValue(start);

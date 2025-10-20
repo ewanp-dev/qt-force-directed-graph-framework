@@ -7,7 +7,6 @@
 #include <cmath>
 #include <unordered_set>
 #include <string>
-#include <iostream>
 
 ForceDirectedGraph::ForceDirectedGraph(QWidget* parent) 
     : view_(new GraphicsView()), scene_(new GraphicsScene())
@@ -95,7 +94,7 @@ QPointF ForceDirectedGraph::computeAttraction(Node *node)
 
     QPointF velocityDelta(0.0, 0.0);
 
-    for (Edge* edge : node->connections()) {
+    for (Edge* edge : node->getConnections()) {
         Node* other = (edge->node == node) ? edge->input : edge->node;
         
         QPointF repelDirection = other->pos() - node->pos();
@@ -134,7 +133,7 @@ void ForceDirectedGraph::updatePhysics(double dt)
         node->velocity *= 0.9;
         if (!node->isDragging()) 
         {
-        node->setPos(node->pos() + node->velocity);
+            node->setPos(node->pos() + node->velocity);
         }
 
         double speed = std::hypot(node->velocity.x(), node->velocity.y());
@@ -156,31 +155,27 @@ void ForceDirectedGraph::tick() {
 }
 
 void ForceDirectedGraph::onNodeHoverEnter(Node *hoveredNode) {
-    // FIX: Edge highlighting is currently highlighting both input
-    // and output whereas it should be outputs only
-
-    std::cout << hoveredNode->isActive() << '\n';
     std::unordered_set<Node*> family = { hoveredNode };
-    for (Edge *connection : hoveredNode->outputs()) {
-        connection->fadeColor(QColor("#2c2f33"), QColor("#c9bf99"));
+    for (Edge *connection : hoveredNode->getOutputs()) {
+        connection->setFadeColor(QColor("#2c2f33"), QColor("#c9bf99"));
         family.insert(connection->node);
     }
 
     for (Node *node : nodeStore_) {
         if (family.find(node) != family.end()) {
-            node->fadeColor(QColor("#bec4cf"), QColor("#c9bf99"));
+            node->setFadeColor(QColor("#bec4cf"), QColor("#c9bf99"));
         } else {
-            node->fadeColor(QColor("#bec4cf"), QColor("#404040"));
+            node->setFadeColor(QColor("#bec4cf"), QColor("#404040"));
         }
     }
 }
 
 void ForceDirectedGraph::onNodeHoverLeave(Node *hoveredNode) {
-    for (Edge *connection : hoveredNode->outputs()) {
-        connection->fadeColor(QColor("#c9bf99"), QColor("#2c2f33"));
+    for (Edge *connection : hoveredNode->getOutputs()) {
+        connection->setFadeColor(QColor("#c9bf99"), QColor("#2c2f33"));
     }
 
     for (Node *node : nodeStore_) {
-        node->fadeColor(node->brush().color(), QColor("#bec4cf"));
+        node->setFadeColor(node->brush().color(), QColor("#bec4cf"));
     }
 }

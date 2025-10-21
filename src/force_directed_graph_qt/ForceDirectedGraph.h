@@ -10,6 +10,7 @@
 
 class ForceDirectedGraph : public QWidget
 {
+    Q_OBJECT
     public:
         ForceDirectedGraph(QWidget* parent = nullptr);
 
@@ -17,13 +18,15 @@ class ForceDirectedGraph : public QWidget
         void connectNodes(Node* startNode, Node* endNode);
         void connectMultipleNodes(Node* startNode, const std::vector<Node*>& endNodes);
 
+        void initSimulation();
     protected:
         void onNodeHoverEnter(Node* hoveredNode);
         void onNodeHoverLeave(Node* hoveredNode);
 
-    private:
+    private Q_SLOTS:
         void tick();
-        void initSimulation();
+
+    private:
         void updatePhysics(double dt);
         QPointF computeRepulsion(Node* node);
         QPointF computeAttraction(Node* node);

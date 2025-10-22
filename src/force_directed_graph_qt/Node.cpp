@@ -7,7 +7,7 @@
 #include <QCursor>
 #include <qnamespace.h>
 
-Node::Node(std::string &nodeName, qreal x, qreal y, qreal w, qreal h, QGraphicsItem* parent) 
+fdg::Node::Node(std::string &nodeName, qreal x, qreal y, qreal w, qreal h, QGraphicsItem* parent) 
     : QGraphicsEllipseItem(parent), nodeName_(nodeName),
     x_(x), y_(y), nodeColor_("#bec4cf"),
     hoverColor_("#c9bf99"), charLimit_(12), label_(new QGraphicsTextItem(nodeName_.c_str(), this))
@@ -27,13 +27,13 @@ Node::Node(std::string &nodeName, qreal x, qreal y, qreal w, qreal h, QGraphicsI
     updateLabelPosition_(4);
 }
 
-void Node::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
+void fdg::Node::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
     QStyleOptionGraphicsItem opt(*option);
     opt.state &= ~QStyle::State_Selected;
     QGraphicsEllipseItem::paint(painter, &opt, widget);
 }
 
-void Node::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
+void fdg::Node::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     hoverEntered(this);
     setColor(hoverColor_);
     setCursor(Qt::CursorShape::OpenHandCursor);
@@ -42,7 +42,7 @@ void Node::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     QGraphicsEllipseItem::hoverEnterEvent(event);
 }
 
-void Node::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
+void fdg::Node::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     hoverLeft(this);
     setDefaultColor();
     unsetCursor();
@@ -51,7 +51,7 @@ void Node::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     QGraphicsEllipseItem::hoverLeaveEvent(event);
 }
 
-void Node::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+void fdg::Node::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     
     if (event->button() != Qt::MouseButton::LeftButton) {
         QGraphicsEllipseItem::mousePressEvent(event);
@@ -60,13 +60,13 @@ void Node::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     }
 }
 
-void Node::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+void fdg::Node::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     setSelected(false);
     isDragging_ = false;
     QGraphicsEllipseItem::mouseReleaseEvent(event);
 } 
 
-QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value) {
+QVariant fdg::Node::itemChange(GraphicsItemChange change, const QVariant &value) {
     if (change == GraphicsItemChange::ItemPositionHasChanged) {
         setSelected(false);
         for (Edge* conn : connections_) {
@@ -76,7 +76,7 @@ QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value) {
     return QGraphicsEllipseItem::itemChange(change, value);
 }
 
-void Node::updateLabelPosition_(int y_pos) {
+void fdg::Node::updateLabelPosition_(int y_pos) {
     QRectF nodeRect = rect();
     QRectF labelRect = label_->boundingRect();
 
@@ -85,7 +85,7 @@ void Node::updateLabelPosition_(int y_pos) {
     label_->setPos(x, y);
 }
 
-void Node::setName(std::string& name) {
+void fdg::Node::setName(std::string& name) {
     nodeName_ = name;
     if (nodeName_.length() > this->charLimit_) {
         nodeName_ = nodeName_.substr(0, 12);
@@ -94,50 +94,50 @@ void Node::setName(std::string& name) {
     updateLabelPosition_(4);
 }
 
-std::string Node::getName() {
+std::string fdg::Node::getName() {
     return nodeName_;
 }
 
-void Node::addInput(Edge* input) {
+void fdg::Node::addInput(Edge* input) {
     inputs_.push_back(input);
 }
 
-void Node::addOutput(Edge* output) {
+void fdg::Node::addOutput(Edge* output) {
     outputs_.push_back(output);
 }
 
-void Node::addConnection(Edge* connection) {
+void fdg::Node::addConnection(Edge* connection) {
     connections_.push_back(connection);
 }
 
-std::vector<Edge*> Node::getInputs() {
+std::vector<fdg::Edge*> fdg::Node::getInputs() {
     return inputs_;
 }
 
-std::vector<Edge*> Node::getOutputs() {
+std::vector<fdg::Edge*> fdg::Node::getOutputs() {
     return outputs_;
 }
 
-std::vector<Edge*> Node::getConnections() {
+std::vector<fdg::Edge*> fdg::Node::getConnections() {
     return connections_;
 }
 
-void Node::setNodeRadius(float radius) {
+void fdg::Node::setNodeRadius(float radius) {
     radius = (radius < 0.001) ? 0.001 : (radius > 150) ? 150 : radius;
     setRect(-radius / 2, -radius / 2, radius, radius);
 }
 
-QPointF Node::getCenterPosition() {
+QPointF fdg::Node::getCenterPosition() {
     return scenePos();
 } 
 
-void Node::setColor(const std::string &color) {
+void fdg::Node::setColor(const std::string &color) {
     QColor qcolor(color.c_str());
     setBrush(QBrush(qcolor));
     update();
 }
 
-void Node::setFadeColor(const QColor &start, const QColor &end, int duration) {
+void fdg::Node::setFadeColor(const QColor &start, const QColor &end, int duration) {
     // NOTE: Added the animation is a member, deleting it before starting another fadeColor
     // as this was causing the enter and leave animations to overlap 
 
@@ -173,12 +173,12 @@ void Node::setFadeColor(const QColor &start, const QColor &end, int duration) {
     animation_->start();
 }
 
-void Node::setDefaultColor() {
+void fdg::Node::setDefaultColor() {
     QColor qcolor(nodeColor_.c_str());
     setBrush(QBrush(qcolor));
 }
 
-bool Node::isDragging() const {
+bool fdg::Node::isDragging() const {
     return isDragging_;
 }
 

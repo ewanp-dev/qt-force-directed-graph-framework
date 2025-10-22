@@ -3,15 +3,17 @@
 #include <QGraphicsLineItem>
 #include <QObject>
 
+namespace fdg {
+
 class Node;
 
 class Edge : public QObject, public QGraphicsLineItem
 {
     Q_OBJECT
     public:
-        Edge(Node* node, Node* input);
-        Node* node;
-        Node* input;
+        Edge(fdg::Node* node, fdg::Node* input);
+        fdg::Node* node;
+        fdg::Node* input;
         void updatePosition();
         void setLineColor(std::string color);
         void setDefaultColor();
@@ -19,3 +21,5 @@ class Edge : public QObject, public QGraphicsLineItem
     private:
         std::string defaultColor_;
 };
+
+}

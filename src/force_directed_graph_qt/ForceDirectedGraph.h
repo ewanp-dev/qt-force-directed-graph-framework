@@ -8,32 +8,37 @@
 #include "GraphicsScene.h"
 #include "Node.h"
 
+namespace fdg
+{
+
 class ForceDirectedGraph : public QWidget
 {
     public:
         ForceDirectedGraph(QWidget* parent = nullptr);
 
-        Node* addNode(std::string name);
-        void connectNodes(Node* startNode, Node* endNode);
-        void connectMultipleNodes(Node* startNode, const std::vector<Node*>& endNodes);
+        fdg::Node* addNode(std::string name);
+        void connectNodes(fdg::Node* startNode, fdg::Node* endNode);
+        void connectMultipleNodes(fdg::Node* startNode, const std::vector<fdg::Node*>& endNodes);
 
     protected:
-        void onNodeHoverEnter(Node* hoveredNode);
-        void onNodeHoverLeave(Node* hoveredNode);
+        void onNodeHoverEnter(fdg::Node* hoveredNode);
+        void onNodeHoverLeave(fdg::Node* hoveredNode);
 
     private:
         void tick();
         void initSimulation();
         void updatePhysics(double dt);
-        QPointF computeRepulsion(Node* node);
-        QPointF computeAttraction(Node* node);
-        QPointF computeCenterGravity(Node* node);
+        QPointF computeRepulsion(fdg::Node* node);
+        QPointF computeAttraction(fdg::Node* node);
+        QPointF computeCenterGravity(fdg::Node* node);
 
         QTimer* timer_;
         QElapsedTimer elapsed_;
-        std::vector<Node*> nodeStore_;
+        std::vector<fdg::Node*> nodeStore_;
 
         GraphicsView* view_;
         GraphicsScene* scene_;
 
 };
+
+}

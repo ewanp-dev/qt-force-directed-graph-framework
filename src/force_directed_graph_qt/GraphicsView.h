@@ -2,6 +2,9 @@
 
 #include <QGraphicsView>
 
+namespace fdg
+{
+
 class GraphicsView : public QGraphicsView
 {
 public:
@@ -21,3 +24,5 @@ private:
     float zoomCurrent_ = 1.0f;
 
 };
+
+}

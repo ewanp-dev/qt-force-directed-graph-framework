@@ -3,6 +3,9 @@
 #include <QGraphicsScene>
 #include <QObject>
 
+namespace fdg
+{
+
 class GraphicsScene : public QGraphicsScene 
 {
 public:
@@ -15,3 +18,5 @@ private:
     int x_ = -sceneWidth_ / 2;
     int y_ = -sceneHeight_ / 2;
 };
+
+}

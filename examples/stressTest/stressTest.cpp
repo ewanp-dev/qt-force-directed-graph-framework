@@ -12,21 +12,21 @@ int main(int argc, char **argv)
     int COLUMNS = 5;
     int GAP = 20;
 
-    ForceDirectedGraph* graph = new ForceDirectedGraph();
+    fdg::ForceDirectedGraph* graph = new fdg::ForceDirectedGraph();
 
-    std::vector<Node*> createdNodes;
+    std::vector<fdg::Node*> createdNodes;
     for(int row=0; row<ROWS; row++)
     {
         for(int column=0; column<COLUMNS; column++)
         {
-            Node* newNode = graph->addNode("foo");
+            fdg::Node* newNode = graph->addNode("foo");
             newNode->setPos(row*GAP, column*GAP);
 
             // connect node
             if(createdNodes.size()>0)
             {
                 int index = std::rand() % createdNodes.size();
-                Node* connectedNode = createdNodes[index];
+                fdg::Node* connectedNode = createdNodes[index];
 
                 graph->connectNodes(newNode, connectedNode);
             }

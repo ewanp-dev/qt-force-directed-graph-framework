@@ -1,9 +1,8 @@
 #include "GraphicsView.h"
 #include <QMouseEvent>
 #include <QScrollBar>
-#include <iostream>
 
-GraphicsView::GraphicsView(QWidget *parent) : QGraphicsView(parent) {
+fdg::GraphicsView::GraphicsView(QWidget *parent) : QGraphicsView(parent) {
   setRenderHints(QPainter::RenderHint::Antialiasing |
                  QPainter::RenderHint::TextAntialiasing |
                  QPainter::RenderHint::SmoothPixmapTransform);
@@ -13,7 +12,7 @@ GraphicsView::GraphicsView(QWidget *parent) : QGraphicsView(parent) {
   setVerticalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
 }
 
-void GraphicsView::mousePressEvent(QMouseEvent *event) {
+void fdg::GraphicsView::mousePressEvent(QMouseEvent *event) {
   if (event->button() == Qt::MouseButton::MiddleButton) {
     lastMousePos_ = event->pos();
     isPanning_ = true;
@@ -23,7 +22,7 @@ void GraphicsView::mousePressEvent(QMouseEvent *event) {
   }
 }
 
-void GraphicsView::mouseMoveEvent(QMouseEvent *event) {
+void fdg::GraphicsView::mouseMoveEvent(QMouseEvent *event) {
   if (isPanning_) {
     QPoint delta = event->pos() - lastMousePos_;
 
@@ -41,7 +40,7 @@ void GraphicsView::mouseMoveEvent(QMouseEvent *event) {
   }
 }
 
-void GraphicsView::mouseReleaseEvent(QMouseEvent *event) {
+void fdg::GraphicsView::mouseReleaseEvent(QMouseEvent *event) {
   if (event->button() == Qt::MouseButton::MiddleButton) {
     lastMousePos_ = QPoint();
     isPanning_ = false;
@@ -51,7 +50,7 @@ void GraphicsView::mouseReleaseEvent(QMouseEvent *event) {
   }
 }
 
-void GraphicsView::wheelEvent(QWheelEvent *event) {
+void fdg::GraphicsView::wheelEvent(QWheelEvent *event) {
   QPointF oldPos = mapToScene(event->position().toPoint());
 
   bool isZoomingOut = event->angleDelta().y() < 0;

@@ -8,8 +8,8 @@
 #include <unordered_set>
 #include <string>
 
-ForceDirectedGraph::ForceDirectedGraph(QWidget* parent) 
-    : view_(new GraphicsView()), scene_(new GraphicsScene())
+fdg::ForceDirectedGraph::ForceDirectedGraph(QWidget* parent) 
+    : view_(new fdg::GraphicsView()), scene_(new fdg::GraphicsScene())
 {
     setContentsMargins(0, 0, 0, 0);
 
@@ -25,12 +25,12 @@ ForceDirectedGraph::ForceDirectedGraph(QWidget* parent)
     initSimulation();
 }
 
-void ForceDirectedGraph::initSimulation()
+void fdg::ForceDirectedGraph::initSimulation()
 {
     // init timer
     timer_ = new QTimer(this);
     timer_->setTimerType(Qt::PreciseTimer);
-    connect(timer_, &QTimer::timeout, this, &ForceDirectedGraph::tick);
+    connect(timer_, &QTimer::timeout, this, &fdg::ForceDirectedGraph::tick);
 
     const int fps = 60;
 
@@ -42,35 +42,35 @@ void ForceDirectedGraph::initSimulation()
 
 }
 
-Node* ForceDirectedGraph::addNode(std::string name) {
+fdg::Node* fdg::ForceDirectedGraph::addNode(std::string name) {
     // placeholder
-    Node* node = new Node(name);
+    fdg::Node* node = new fdg::Node(name);
     scene_->addItem(node);
 
-    connect(node, &Node::hoverEntered, this, &ForceDirectedGraph::onNodeHoverEnter);
-    connect(node, &Node::hoverLeft, this, &ForceDirectedGraph::onNodeHoverLeave);
+    connect(node, &fdg::Node::hoverEntered, this, &fdg::ForceDirectedGraph::onNodeHoverEnter);
+    connect(node, &fdg::Node::hoverLeft, this, &fdg::ForceDirectedGraph::onNodeHoverLeave);
 
     nodeStore_.push_back(node);
     return node;
 }
 
-void ForceDirectedGraph::connectNodes(Node* startNode, Node* endNode)
+void fdg::ForceDirectedGraph::connectNodes(fdg::Node* startNode, fdg::Node* endNode)
 {
-    scene_->addItem(new Edge(startNode, endNode));
+    scene_->addItem(new fdg::Edge(startNode, endNode));
 }
 
-void ForceDirectedGraph::connectMultipleNodes(Node* startNode, const std::vector<Node*> &endNodes) {
-    for (Node* node : endNodes) {
-        scene_->addItem(new Edge(startNode, node));
+void fdg::ForceDirectedGraph::connectMultipleNodes(fdg::Node* startNode, const std::vector<fdg::Node*> &endNodes) {
+    for (fdg::Node* node : endNodes) {
+        scene_->addItem(new fdg::Edge(startNode, node));
     } 
 }
 
-QPointF ForceDirectedGraph::computeRepulsion(Node *node) 
+QPointF fdg::ForceDirectedGraph::computeRepulsion(fdg::Node* node) 
 {
     const double kRepel = 400.0;
     QPointF velocityDelta(0.0, 0.0);
 
-    for (Node* otherNode : nodeStore_) {
+    for (fdg::Node* otherNode : nodeStore_) {
         if (node == otherNode) {
             continue;
         }
@@ -87,15 +87,15 @@ QPointF ForceDirectedGraph::computeRepulsion(Node *node)
     return velocityDelta;
 }
 
-QPointF ForceDirectedGraph::computeAttraction(Node *node)
+QPointF fdg::ForceDirectedGraph::computeAttraction(fdg::Node* node)
 {
     const double kSpring = 0.05;
     const double restLength = 80.0; // distance between nodes
 
     QPointF velocityDelta(0.0, 0.0);
 
-    for (Edge* edge : node->getConnections()) {
-        Node* other = (edge->node == node) ? edge->input : edge->node;
+    for (fdg::Edge* edge : node->getConnections()) {
+        fdg::Node* other = (edge->node == node) ? edge->input : edge->node;
         
         QPointF repelDirection = other->pos() - node->pos();
         const float length = sqrt(repelDirection.x()*repelDirection.x() + repelDirection.y()*repelDirection.y());
@@ -110,7 +110,7 @@ QPointF ForceDirectedGraph::computeAttraction(Node *node)
     return velocityDelta;
 }
 
-QPointF ForceDirectedGraph::computeCenterGravity(Node *node)
+QPointF fdg::ForceDirectedGraph::computeCenterGravity(fdg::Node* node)
 {
     QPointF center(scene_->sceneRect().center());
     QPointF delta = center - node->pos();
@@ -118,11 +118,11 @@ QPointF ForceDirectedGraph::computeCenterGravity(Node *node)
     return delta * gravity;
 }
 
-void ForceDirectedGraph::updatePhysics(double dt) 
+void fdg::ForceDirectedGraph::updatePhysics(double dt) 
 {
     // TODO: Stop nodes from glitching when moved too far away from nearest input
     // TODO: Stop simulation when node speed gets to a certain threshold
-    for (Node* node : nodeStore_) {
+    for (fdg::Node* node : nodeStore_) {
         QPointF repulsiveForce = computeRepulsion(node);
         QPointF attractiveForce = computeAttraction(node);
         QPointF gravityForce = computeCenterGravity(node);
@@ -140,7 +140,7 @@ void ForceDirectedGraph::updatePhysics(double dt)
     }
 }
 
-void ForceDirectedGraph::tick() {
+void fdg::ForceDirectedGraph::tick() {
     const qint64 ns = elapsed_.nsecsElapsed();
     elapsed_.restart();
 
@@ -154,14 +154,14 @@ void ForceDirectedGraph::tick() {
     scene_->update();
 }
 
-void ForceDirectedGraph::onNodeHoverEnter(Node *hoveredNode) {
-    std::unordered_set<Node*> family = { hoveredNode };
-    for (Edge *connection : hoveredNode->getOutputs()) {
+void fdg::ForceDirectedGraph::onNodeHoverEnter(fdg::Node* hoveredNode) {
+    std::unordered_set<fdg::Node*> family = { hoveredNode };
+    for (fdg::Edge* connection : hoveredNode->getOutputs()) {
         connection->setFadeColor(QColor("#2c2f33"), QColor("#c9bf99"));
         family.insert(connection->node);
     }
 
-    for (Node *node : nodeStore_) {
+    for (fdg::Node* node : nodeStore_) {
         if (family.find(node) != family.end()) {
             node->setFadeColor(QColor("#bec4cf"), QColor("#c9bf99"));
         } else {
@@ -170,12 +170,12 @@ void ForceDirectedGraph::onNodeHoverEnter(Node *hoveredNode) {
     }
 }
 
-void ForceDirectedGraph::onNodeHoverLeave(Node *hoveredNode) {
-    for (Edge *connection : hoveredNode->getOutputs()) {
+void fdg::ForceDirectedGraph::onNodeHoverLeave(fdg::Node* hoveredNode) {
+    for (fdg::Edge* connection : hoveredNode->getOutputs()) {
         connection->setFadeColor(QColor("#c9bf99"), QColor("#2c2f33"));
     }
 
-    for (Node *node : nodeStore_) {
+    for (fdg::Node* node : nodeStore_) {
         node->setFadeColor(node->brush().color(), QColor("#bec4cf"));
     }
 }

@@ -3,7 +3,7 @@
 #include <QPen>
 #include <QVariantAnimation>
 
-Edge::Edge(Node* node, Node* input) 
+fdg::Edge::Edge(Node* node, Node* input) 
     : node(node), input(input), defaultColor_("#2c2f33")
 {
     node->addInput(this);
@@ -15,7 +15,7 @@ Edge::Edge(Node* node, Node* input)
     updatePosition();
 }
 
-void Edge::updatePosition() {
+void fdg::Edge::updatePosition() {
     setLine(
         node->getCenterPosition().x(),
         node->getCenterPosition().y(),
@@ -24,15 +24,15 @@ void Edge::updatePosition() {
     );
 }
 
-void Edge::setLineColor(std::string color) {
+void fdg::Edge::setLineColor(std::string color) {
     setPen(QPen(QColor(color.c_str()), 2));
 }
 
-void Edge::setDefaultColor() {
+void fdg::Edge::setDefaultColor() {
     setLineColor(defaultColor_);
 }
 
-void Edge::setFadeColor(const QColor &start, const QColor &end, int duration) {
+void fdg::Edge::setFadeColor(const QColor &start, const QColor &end, int duration) {
     auto *anim = new QVariantAnimation();
     anim->setDuration(duration);
     anim->setStartValue(start);

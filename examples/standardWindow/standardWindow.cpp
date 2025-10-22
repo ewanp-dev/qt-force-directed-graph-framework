@@ -7,11 +7,11 @@ int main(int argc, char **argv)
 {
     QApplication app (argc, argv);
 
-    ForceDirectedGraph* graph = new ForceDirectedGraph();
-    Node* nodeA = graph->addNode("Hello World");
-    Node* nodeB = graph->addNode("Something");
-    Node* nodeC = graph->addNode("Foo");
-    Node* nodeD = graph->addNode("Bar");
+    fdg::ForceDirectedGraph* graph = new fdg::ForceDirectedGraph();
+    fdg::Node* nodeA = graph->addNode("Hello World");
+    fdg::Node* nodeB = graph->addNode("Something");
+    fdg::Node* nodeC = graph->addNode("Foo");
+    fdg::Node* nodeD = graph->addNode("Bar");
 
     graph->connectNodes(nodeA, nodeB);
     graph->connectNodes(nodeC, nodeD);

@@ -19,6 +19,7 @@ class ForceDirectedGraph : public QWidget
         fdg::Node* addNode(std::string name);
         void connectNodes(fdg::Node* startNode, fdg::Node* endNode);
         void connectMultipleNodes(fdg::Node* startNode, const std::vector<fdg::Node*>& endNodes);
+        void clearNodes();
 
     protected:
         void onNodeHoverEnter(fdg::Node* hoveredNode);
@@ -36,8 +37,8 @@ class ForceDirectedGraph : public QWidget
         QElapsedTimer elapsed_;
         std::vector<fdg::Node*> nodeStore_;
 
-        GraphicsView* view_;
         GraphicsScene* scene_;
+        GraphicsView* view_;
 
 };
 

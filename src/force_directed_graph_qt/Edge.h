@@ -11,7 +11,7 @@ class Edge : public QObject, public QGraphicsLineItem
 {
     Q_OBJECT
     public:
-        Edge(fdg::Node* node, fdg::Node* input);
+        Edge(fdg::Node* node, fdg::Node* input, QGraphicsItem* parent = nullptr);
         fdg::Node* node;
         fdg::Node* input;
         void updatePosition();

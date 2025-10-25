@@ -3,7 +3,7 @@
 #include <QPen>
 #include <QVariantAnimation>
 
-fdg::Edge::Edge(Node* node, Node* input) 
+fdg::Edge::Edge(Node* node, Node* input, QGraphicsItem* parent) 
     : node(node), input(input), defaultColor_("#2c2f33")
 {
     node->addInput(this);

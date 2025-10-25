@@ -7,10 +7,13 @@
 #include <cmath>
 #include <unordered_set>
 #include <string>
+#include <iostream>
 
 fdg::ForceDirectedGraph::ForceDirectedGraph(QWidget* parent) 
-    : view_(new fdg::GraphicsView()), scene_(new fdg::GraphicsScene())
+    : view_(new fdg::GraphicsView()), scene_(new fdg::GraphicsScene(this))
 {
+    if (!parent)
+        std::cout << "There is no parent" << '\n';
     setContentsMargins(0, 0, 0, 0);
 
     view_->setScene(scene_);
@@ -22,12 +25,15 @@ fdg::ForceDirectedGraph::ForceDirectedGraph(QWidget* parent)
 
     setLayout(mainLayout);
 
-    initSimulation();
+    // initSimulation();
 }
 
 void fdg::ForceDirectedGraph::initSimulation()
 {
     // init timer
+    if (nodeStore_.empty())
+        return;
+
     timer_ = new QTimer(this);
     timer_->setTimerType(Qt::PreciseTimer);
     connect(timer_, &QTimer::timeout, this, &fdg::ForceDirectedGraph::tick);
@@ -45,12 +51,14 @@ void fdg::ForceDirectedGraph::initSimulation()
 fdg::Node* fdg::ForceDirectedGraph::addNode(std::string name) {
     // placeholder
     fdg::Node* node = new fdg::Node(name);
+
     scene_->addItem(node);
 
     connect(node, &fdg::Node::hoverEntered, this, &fdg::ForceDirectedGraph::onNodeHoverEnter);
     connect(node, &fdg::Node::hoverLeft, this, &fdg::ForceDirectedGraph::onNodeHoverLeave);
 
     nodeStore_.push_back(node);
+
     return node;
 }
 
@@ -178,4 +186,10 @@ void fdg::ForceDirectedGraph::onNodeHoverLeave(fdg::Node* hoveredNode) {
     for (fdg::Node* node : nodeStore_) {
         node->setFadeColor(node->brush().color(), QColor("#bec4cf"));
     }
+}
+
+void fdg::ForceDirectedGraph::clearNodes()
+{
+    nodeStore_.clear();
+    scene_->clear();
 }

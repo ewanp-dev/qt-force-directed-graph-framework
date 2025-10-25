@@ -15,8 +15,10 @@ class ForceDirectedGraph : public QWidget
         ForceDirectedGraph(QWidget* parent = nullptr);
 
         fdg::Node* addNode(std::string name);
+        void initSimulation();
         void connectNodes(fdg::Node* startNode, fdg::Node* endNode);
         void connectMultipleNodes(fdg::Node* startNode, const std::vector<fdg::Node*>& endNodes);
+        void clearNodes();
 
     protected:
         void onNodeHoverEnter(fdg::Node* hoveredNode);

@@ -7,7 +7,7 @@
 </div>
 <br>
 
-This repository provides classes for creating force-directed node graphs in Qt.
+This repository provides classes for creating force-directed node graphs in Qt6.
 
 > [!NOTE]
 > Early WIP
